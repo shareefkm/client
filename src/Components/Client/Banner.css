@@ -1,0 +1,10 @@
+.hide-background-image {
+    background-image: url("/images/banner-img-1.webp");
+    background-repeat: no-repeat;
+}
+
+@media (max-width: 767px) {
+    .hide-background-image {
+        background-image: none !important;
+    }
+}
