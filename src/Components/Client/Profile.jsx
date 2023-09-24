@@ -50,7 +50,12 @@ function Profile() {
       setEmail(response?.data?.user?.Email);
       setMobile(response?.data?.user?.Mobile);
       setAddress(response?.data?.user?.Address);
-    });
+    }).catch((error)=>{
+      toast.error(error.response.data.message, {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 3000,
+      });
+    })
   }, [is_change,form]);
 
   useEffect(() => {

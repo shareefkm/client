@@ -85,7 +85,7 @@ function Login(props) {
           if (respose.data.success) {
             const data = respose.data;
             dispatch(
-              employeeLogin({ token: data.token, employee: data.employee.Name })
+              employeeLogin({ token: data.token, employee: data.employee.Name, _id:data.employee._id })
             );
             navigate("/employee");
           } else {

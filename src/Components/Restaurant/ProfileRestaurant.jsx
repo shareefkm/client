@@ -14,6 +14,7 @@ function ProfileRestaurant() {
     Name: "",
     Email: "",
     Mobile: "",
+    Place: "",
   });
   const [address, setAddress] = useState({
     street: "",
@@ -35,6 +36,7 @@ function ProfileRestaurant() {
           Name: response.data.restData.Name,
           Email: response.data.restData.Email,
           Mobile: response.data.restData.Mobile,
+          Place: response.data.restData.Place,
         });
         setAddress({
           street: response.data.restData.Address.street,
@@ -71,7 +73,8 @@ function ProfileRestaurant() {
         address.postalCode.trim().length === 0 ||
         editData.Name.trim().length === 0 ||
         editData.Email.trim().length === 0 ||
-        editData.Mobile.trim().length === 0
+        editData.Mobile.trim().length === 0 ||
+        editData.Place.trim().length === 0 
       ) {
         toast.error("Please fill all field", {
           position: toast.POSITION.TOP_CENTER,
@@ -138,7 +141,7 @@ function ProfileRestaurant() {
             type="text"
             id="place"
             value={is_edit ? editData.Place : resData.Place}
-            onChange={(e) => setEditData({ ...editData, Name: e.target.value })}
+            onChange={(e) => setEditData({ ...editData, Place: e.target.value })}
             required
             className={
               is_edit

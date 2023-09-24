@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
@@ -72,25 +72,25 @@ function Orders() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200 border">
                 {orderItem.map((item) => (
-                  <>
+                  <Fragment key={item._id}>
                     {item.item.map((ele) => (
                       <tr key={ele._id}>
                         <td className="flex px-6 py-2 whitespace-nowrap">
                           <img
-                            src={ele.product.images}
+                            src={ele.product?.images}
                             alt=""
                             className="h-10 w-10 mr-10"
                           />
-                          {ele.product.name}
+                          {ele.product?.name}
                         </td>
                         <td className="px-6 py-2 whitespace-nowrap">
-                          {ele.quantity}
+                          {ele?.quantity}
                         </td>
                         <td className="px-6 py-2 whitespace-nowrap">
-                          {ele.product.price}
+                          {ele.product?.price}
                         </td>
                         <td className="px-6 py-2 whitespace-nowrap">
-                          {ele.price}
+                          {ele?.price}
                           <h1 hidden> {(total = total + ele.price)}</h1>
                         </td>
                         <td className="px-6 py-2 whitespace-nowrap">
@@ -103,10 +103,9 @@ function Orders() {
                             </button>
                           }
                         </td>
-                        <hr />
                       </tr>
                     ))}
-                  </>
+                  </Fragment>
                 ))}
                 <tr className="px-6 py-2 whitespace-nowra justify-between items-end">
                   <td></td>

@@ -1,9 +1,9 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import EmployeeHome from '../Pages/DeliveryBoy/EmployeeHome'
 import EmployeeRegister from '../Pages/DeliveryBoy/EmployeeRegister'
 import EmployeeLogin from '../Pages/DeliveryBoy/EmployeeLogin'
+import EmployeeHomePage from '../Pages/DeliveryBoy/EmployeeHomePage'
 
 function EmployeeRoute() {
   const isAuth = useSelector((state)=>state.employee)
@@ -11,9 +11,9 @@ function EmployeeRoute() {
   return (
     <div>
       <Routes>
-        <Route path='/' element = { isAuth.token ? <EmployeeHome/> : <EmployeeLogin/> }/>
-        <Route path='/register' element = { isAuth.token ? <EmployeeHome/> : <EmployeeRegister/> }/>
-        <Route path='/login' element = { isAuth.token ? <EmployeeHome/> : <EmployeeLogin/> }/>
+        <Route path='/' element = { isAuth.token ? <EmployeeHomePage/> : <EmployeeLogin/> }/>
+        <Route path='/register' element = { isAuth.token ? <EmployeeHomePage/> : <EmployeeRegister/> }/>
+        <Route path='/login' element = { isAuth.token ? <EmployeeHomePage/> : <EmployeeLogin/> }/>
       </Routes>
     </div>
   )

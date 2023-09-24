@@ -1,5 +1,5 @@
 import React from 'react'
-import Login from '../../Components/Client/Login'
+import Login from '../../Components/Login'
 
 function RestaurantLogin() {
     const restaurant = true

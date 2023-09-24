@@ -15,6 +15,7 @@ const BillModal = ({ isOpen, closeModal, orderItem }) => {
 
   let total = 0;
 
+console.log(orderItem);
   const restaurant = useSelector((state) => state.restaurant);
   const restaurant_id = restaurant._id;
 
@@ -63,18 +64,20 @@ const BillModal = ({ isOpen, closeModal, orderItem }) => {
               </div>
               <div className="pt-7">
                 <h1 className="text-sm font-bold">Billing Address.</h1>
-                {orderItem.map((data, index) => (
-                  <div key={index}>
-                    {data.address.map((addr, idx) => (
-                      <div key={idx}>
-                        <h1 className="italic ">{addr.street}</h1>
-                        <h1 className="italic">{addr.city}</h1>
-                        <h1 className="italic ">{addr.state}</h1>
-                        <h1 className="italic ">{addr.postalCode}</h1>
-                      </div>
-                    ))}
-                  </div>
-                ))}
+                <div>
+                  {orderItem && orderItem.address && orderItem.address[0] ? (
+                    <div>
+                      <h1 className="italic">{orderItem.address[0].street}</h1>
+                      <h1 className="italic">{orderItem.address[0].city}</h1>
+                      <h1 className="italic">{orderItem.address[0].state}</h1>
+                      <h1 className="italic">
+                        {orderItem.address[0].postalCode}
+                      </h1>
+                    </div>
+                  ) : (
+                    <div>Address information not available.</div>
+                  )}
+                </div>
               </div>
             </div>
             <div className="border p-3 justify-between shadow-md">
@@ -99,27 +102,21 @@ const BillModal = ({ isOpen, closeModal, orderItem }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {orderItem.map((item) => (
-                    <React.Fragment key={item._id}>
-                      {item.item
-                        .filter((data) => data.product !== null)
-                        .map((ele) => (
-                          <tr key={ele._id}>
+                  {orderItem?.item?.filter((data) => data.product !== null).map((item) => (
+                          <tr key={item._id}>
                             <td className="py-2 px-4 border-b">#</td>
-                            <td className="py-2 px-4 border-b">{ele.product?.name}</td>
+                            <td className="py-2 px-4 border-b">{item.product?.name}</td>
                             <td className="py-2 px-4 border-b">
-                            {ele?.quantity}
+                            {item?.quantity}
                             </td>
                             <td className="py-2 px-4 border-b">
-                            {ele.product?.price}
+                            {item.product?.price}
                             </td>
                             <td className="py-2 px-4 border-b">
-                            {ele?.price}
-                            <h1 hidden> {(total = total + ele.price)}</h1>
+                            {item?.price}
+                            <h1 hidden> {(total = total + item.price)}</h1>
                             </td>
                           </tr>
-                        ))}
-                    </React.Fragment>
                   ))}
                   <tr>
                     <td className="py-2 px-4 border-b" colSpan="3">

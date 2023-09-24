@@ -163,8 +163,6 @@ function Cart() {
                         </button>
                       }
                     </td>
-
-                    <hr />
                   </tr>
                 ))}
                 <tr className="px-6 py-2 whitespace-nowra justify-between items-end">
@@ -204,3 +202,4 @@ function Cart() {
 }
 
 export default Cart;
+

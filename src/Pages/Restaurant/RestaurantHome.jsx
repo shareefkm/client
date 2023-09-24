@@ -1,6 +1,6 @@
 import React from 'react'
 import SideBar from '../../Components/Restaurant/SideBar'
-import Header from '../../Components/Client/Header'
+import Header from '../../Layouts/Header/Header'
 
 function RestaurantHome() {
   return (

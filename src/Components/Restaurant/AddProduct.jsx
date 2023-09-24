@@ -22,7 +22,7 @@ function AddProduct() {
 
   const restaurant = useSelector((state) => state.restaurant);
   const restaurant_id = restaurant._id;
-  
+
   const validPrice = PRICE_REGEX.test(price)
 
   const handleFileChange = (event) => {
