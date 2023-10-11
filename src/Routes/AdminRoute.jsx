@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 
 import AdminHome from '../Pages/Admin/AdminHome'
 import AdminLogin from '../Pages/Admin/AdminLogin'
+import Coupon from '../Pages/Admin/Coupon'
 
 function AdminRoute() {
   const isAuth = useSelector((state)=>state.admin)
@@ -11,6 +12,7 @@ function AdminRoute() {
     <div>
       <Routes>
         <Route path='/' element={isAuth.token ? <AdminHome/> : <AdminLogin/>}/>
+        <Route path='/coupon' element={isAuth.token ? <Coupon/> : <AdminLogin/>}/>
       </Routes>
     </div>
   )

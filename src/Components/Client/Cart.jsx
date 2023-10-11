@@ -21,17 +21,17 @@ function Cart() {
 
   useEffect(() => {
     UserAxios.get(`/getcart?id=${user._id}`).then((response) => {
-      const items = response.data.cartData.items;
+      const items = response.data?.cartData?.items;
       setCartItem(items);
       setCartId(response.data.cartData);
     });
   }, [is_chage]);
-
-  const handleChangeQuantity = (id, action) => {
+  const handleChangeQuantity = (id,variant, action) => {
     UserAxios.patch("/changequantity", {
       itemId: id,
       cartId: cartId._id,
       action,
+      variant
     })
       .then((response) => {
         setChange(!is_chage);
@@ -44,7 +44,7 @@ function Cart() {
       });
   };
 
-  const cancelCartItem = async (id) => {
+  const cancelCartItem = async (id, variant) => {
     const result = await Swal.fire({
       title: "Do you really want to delete this product?",
       icon: "warning",
@@ -56,6 +56,7 @@ function Cart() {
       UserAxios.patch("/cancelcartitem", {
         itemId: id,
         cartId: cartId._id,
+        variant,
       }).then((response) => {
         setChange(!is_chage);
         toast.success(response.data.message, {
@@ -66,7 +67,6 @@ function Cart() {
     }
   };
 
-  
   const updateTotal = (amount, grandTotal)=>{
     if(cartItem.length){
       UserAxios.patch('/updatetotal',{cartId: cartId._id,amount,grandTotal}).then((response)=>{
@@ -99,6 +99,9 @@ function Cart() {
                     RATE
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                    OFFER
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                     PRICE
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
@@ -107,7 +110,7 @@ function Cart() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200 border">
-                {cartItem.map((item) => (
+                {cartItem?.map((item) => (
                   <tr key={item._id}>
                     <td className="flex px-6 py-2 whitespace-nowrap">
                       <img
@@ -115,7 +118,7 @@ function Cart() {
                         alt=""
                         className="h-10 w-10 mr-10"
                       />
-                      {item.productId?.name}
+                      {item.productId?.name}{" - "}{item.variant}
                     </td>
                     <td className="px-6 py-2 whitespace-nowrap">
                       <div className="border border-lime-50 items-center justify-between flex">
@@ -123,11 +126,11 @@ function Cart() {
                           className="bg-slate-200 pl-3"
                           onClick={() => {
                             if (item.quantity > 1) {
-                              handleChangeQuantity(item.productId?._id, {
+                              handleChangeQuantity(item.productId?._id,item.variant, {
                                 decrement: true,
                               });
                             } else {
-                              cancelCartItem(item.productId?._id);
+                              cancelCartItem(item.productId?._id,item.variant);
                             }
                           }}
                         >
@@ -137,7 +140,7 @@ function Cart() {
                         <button
                           className="bg-slate-200 pr-3"
                           onClick={() => {
-                            handleChangeQuantity(item.productId?._id, {
+                            handleChangeQuantity(item.productId?._id,item.variant,{
                               increment: true,
                             });
                           }}
@@ -147,29 +150,33 @@ function Cart() {
                       </div>
                     </td>
                     <td className="px-6 py-2 whitespace-nowrap">
-                      {item.productId?.price}
+                      {parseFloat(item.price).toFixed(2)}
                     </td>
                     <td className="px-6 py-2 whitespace-nowrap">
-                      {item?.price}
+                      {/* {item.offer}% */}
+                    </td>
+                    <td className="px-6 py-2 whitespace-nowrap">
+                      {parseFloat(item?.price).toFixed(2)}
                       <h1 hidden> {(total = total + item.price)}</h1>
                     </td>
                     <td className="px-6 py-2 whitespace-nowrap">
                       {
                         <button
-                          onClick={() => cancelCartItem(item.productId?._id)}
+                          onClick={() => cancelCartItem(item.productId?._id, item.variant)}
                           className="text-red-600 hover:text-red-900"
                         >
-                          Cancel
+                          Remove
                         </button>
                       }
                     </td>
                   </tr>
                 ))}
-                <tr className="px-6 py-2 whitespace-nowra justify-between items-end">
+                <tr className="px-6 py-2 whitespace-nowra items-end">
+                  <td></td>
                   <td></td>
                   <td></td>
                   <td className="text-lg font-semibold">Total:</td>
-                  <td className="text-end text-lg font-semibold">{total}</td>
+                  <td className="text-end text-lg font-semibold float-right">{parseFloat(total).toFixed(2)}</td>
                 </tr>
               </tbody>
             </table>
@@ -182,12 +189,12 @@ function Cart() {
           <div className="border h-full w-full shadow-md ">
             <div className="space-y-4 p-4">
               <h1>
-                Total: <span className="float-right">{total}</span>
+                Total: <span className="float-right">{parseFloat(total).toFixed(2)}</span>
               </h1>
               <h1>Charges:<span className="float-right">{charges}</span></h1>
               <h1>Discount: <span className="float-right">{discount}</span></h1>
               <p hidden>{grandTotal = total + charges - discount}</p>
-              <h1>Grand Total:  <span className="float-right">{grandTotal}</span></h1>
+              <h1>Grand Total:  <span className="float-right">{parseFloat(grandTotal).toFixed(2)}</span></h1>
             </div>
             <br />
             <br />

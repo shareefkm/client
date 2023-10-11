@@ -1,8 +1,10 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 import UserAxios from "../../Axios/UserAxios";
+import OrderTrack from "../../assets/OrderTrack";
 
 function Orders() {
   let total = 0;
@@ -12,6 +14,8 @@ function Orders() {
   const [orderItem, setOrderItem] = useState([]);
   const [cartId, setCartId] = useState({});
   const [is_chage, setChange] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [itemData, setItemDta] = useState({});
 
   const user = useSelector((state) => state.user);
 
@@ -19,22 +23,30 @@ function Orders() {
     UserAxios.get(`/getorders?id=${user._id}`).then((response) => {
       const items = response.data.orders;
       setOrderItem(items);
-      // setCartId(response.data.cartData);
     });
-  }, []);
+  }, [is_chage]);
 
-  const cancelCartItem = async (id) => {
+  const openModal = (ele) => {
+    setIsModalOpen(true);
+    setItemDta(ele)
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+  const cancelOrder = async (orderId,itemId) => {
     const result = await Swal.fire({
-      title: "Do you really want to delete this product?",
+      title: "Do you really want to cancel this Order?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
-      cancelButtonText: "No, cancel",
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
     });
     if (result.isConfirmed) {
-      UserAxios.patch("/cancelcartitem", {
-        itemId: id,
-        cartId: cartId._id,
+      UserAxios.patch("/cancelorder", {
+        itemId,
+        orderId,
+        userId:user._id
       }).then((response) => {
         setChange(!is_chage);
         toast.success(response.data.message, {
@@ -48,7 +60,7 @@ function Orders() {
   return (
     <div className="p-10">
       <div className="border md:flex">
-        <div className="h-full md:w-2/3">
+        <div className="h-full w-full">
           <div className="w-full overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className=" bg-table-blue text-off-White">
@@ -73,14 +85,19 @@ function Orders() {
               <tbody className="bg-white divide-y divide-gray-200 border">
                 {orderItem.map((item) => (
                   <Fragment key={item._id}>
+                    {console.log(item.item)}
                     {item.item.map((ele) => (
                       <tr key={ele._id}>
-                        <td className="flex px-6 py-2 whitespace-nowrap">
+                        <td
+                          className="flex px-6 py-2 whitespace-nowrap"
+                          onClick={() => openModal(ele)}
+                        >
                           <img
                             src={ele.product?.images}
                             alt=""
                             className="h-10 w-10 mr-10"
                           />
+
                           {ele.product?.name}
                         </td>
                         <td className="px-6 py-2 whitespace-nowrap">
@@ -93,18 +110,38 @@ function Orders() {
                           {ele?.price}
                           <h1 hidden> {(total = total + ele.price)}</h1>
                         </td>
-                        <td className="px-6 py-2 whitespace-nowrap">
-                          {
+                        <td className="px-6 py-2 whitespace-nowrap flex justify-center">
+                          {(ele.orderStatus === "Delivered") ? (<div className="bg-green-500 text-white rounded-full p-2">
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M5 13l4 4L19 7"
+                          ></path>
+                        </svg>
+                      </div>) : (
                             <button
-                              // onClick={() => cancelCartItem(item.productId._id)}
+                              onClick={() => cancelOrder(item._id,ele._id)}
                               className="text-red-600 hover:text-red-900"
                             >
                               Cancel
-                            </button>
+                            </button>)
                           }
                         </td>
                       </tr>
                     ))}
+                    <OrderTrack
+                      isOpen={isModalOpen}
+                      closeModal={closeModal}
+                      orderItem={itemData}
+                    />
                   </Fragment>
                 ))}
                 <tr className="px-6 py-2 whitespace-nowra justify-between items-end">
@@ -117,27 +154,7 @@ function Orders() {
             </table>
           </div>
         </div>
-        <div className="p-3 md:w-1/3">
-          <div className="border h-full w-full shadow-md ">
-            <div className="space-y-4 p-4">
-              <h1>
-                Total: <span className="float-right">{total}</span>
-              </h1>
-              <h1>
-                Charges:<span className="float-right">{charges}</span>
-              </h1>
-              <h1>
-                Discount: <span className="float-right">{discount}</span>
-              </h1>
-              <p hidden>{(grandTotal = total + charges - discount)}</p>
-              <h1>
-                Grand Total: <span className="float-right">{grandTotal}</span>
-              </h1>
-            </div>
-            <br />
-            <br />
-          </div>
-        </div>
+        
       </div>
     </div>
   );

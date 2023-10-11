@@ -60,10 +60,6 @@ function Products() {
     }
   };
 
-  const handleEditClick = (id) => {
-    navigate(`/restaurant/editproduct`);
-  };
-
   return (
     <div className="p-10 w-full">
       <div className="border">
@@ -115,7 +111,7 @@ function Products() {
                           className="text-yellow hover:text-orange-500"
                           onClick={() => navigate(`/restaurant/editproduct/${item._id}`)}
                         >
-                          Edit
+                          Edit Menu
                         </button>
                         <button
                           className="text-red-600 hover:text-red-900"
@@ -127,7 +123,6 @@ function Products() {
                       }
                     </td>
 
-                    <hr />
                   </tr>
                 ))}
               </tbody>
@@ -136,7 +131,7 @@ function Products() {
           <div className="pt-10">
             <Button
               onClick={() => navigate("/restaurant/addproduct")}
-              value={"Add"}
+              value={"Add Menu"}
               className={"w-40"}
             />
           </div>

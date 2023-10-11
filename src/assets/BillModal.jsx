@@ -15,7 +15,6 @@ const BillModal = ({ isOpen, closeModal, orderItem }) => {
 
   let total = 0;
 
-console.log(orderItem);
   const restaurant = useSelector((state) => state.restaurant);
   const restaurant_id = restaurant._id;
 
@@ -24,12 +23,12 @@ console.log(orderItem);
       (response) => {
         setResData(response.data.restData);
         setAddress({
-          street: response.data.restData.Address.street,
-          city: response.data.restData.Address.city,
-          state: response.data.restData.Address.state,
-          postalCode: response.data.restData.Address.postalCode,
+          street: response.data.restData?.Address?.street,
+          city: response.data.restData?.Address?.city,
+          state: response.data.restData?.Address?.state,
+          postalCode: response.data.restData?.Address?.postalCode,
         });
-        setImage(response.data.restData.Image);
+        setImage(response.data.restData?.Image);
       }
     );
   }, []);
@@ -41,10 +40,10 @@ console.log(orderItem);
       }`}
     >
       <div className="modal-overlay" onClick={closeModal}></div>
-      <div className="modal-container border">
-        <div className="modal-content bg-white p-4 rounded-lg">
+      <div className="modal-container border rounded">
+        <div className="modal-content bg-off-White p-4 rounded-lg">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-3xl font-bold text-purple font-lobster duration-200">
+            <h2 className="text-3xl font-bold text-cherry-Red font-lobster duration-200">
               Yummi
             </h2>
             <h2 className="text-lg font-bold">Billing Details...</h2>

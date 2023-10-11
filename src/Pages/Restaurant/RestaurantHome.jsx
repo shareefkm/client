@@ -6,7 +6,14 @@ function RestaurantHome() {
   return (
     <div>
       <Header value={"/restaurant/login"} restaurant={true}/>
+      <div className="flex">
+      <div>
       <SideBar/>
+      </div>
+      <div>
+        
+      </div>
+      </div>
     </div>
   )
 }

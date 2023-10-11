@@ -1,0 +1,17 @@
+/* Custom CSS for shadow at the top */
+/* .my-element::before {
+    content: "";
+    position: absolute;
+    top: -10px; /* Adjust this value to control the shadow's position */
+    /* left: 0; */
+    /* right: 0; */
+    /* height: 10px; Adjust this value to control the shadow's size */
+    /* box-shadow: 0 10px 10px -10px rgba(0, 0, 0, 0.1); Adjust shadow properties as needed */
+  /* } */ 
+  
+  /* .border-slash {
+    position: relative;
+    border: 1px solid transparent; /* Set the border color to match your background */
+    /* border-image: linear-gradient(to right, black 33.33%, transparent 33.33%) 1 100%; */
+  /* } */
+   /* */ 

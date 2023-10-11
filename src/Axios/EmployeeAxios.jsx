@@ -1,7 +1,10 @@
 import axios from "axios";
+import io from "socket.io-client";
 
 import { EMPLOYEE_API } from "../Constants/API";
 import { Store } from "../Redux/Store";
+
+// export const socket = io(EMPLOYEE_API);
 
 const employeeInstance = axios.create({
     baseURL:EMPLOYEE_API,

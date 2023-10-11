@@ -1,22 +1,21 @@
 import React, {lazy, Suspense} from 'react'
 import Header from '../../Layouts/Header/Header'
-import Banner from '../../Components/Client/Banner'
 import Layout from '../../Layouts/Layout'
+// import Shops from '../../Components/Client/Shops'
 // import PopularItems from '../../Components/Client/PopularItems'
-const PopularItems = lazy(()=>import('../../Components/Client/PopularItems'))
+const Shops = lazy(()=>import('../../Components/Client/Shops'))
 
-function Home() {
+function ShopPage() {
   return (
     <div>
-        <Header value={"/login"} user={true}/>
+       <Header value={"/login"} user={true}/>
         <Layout>
-        <Banner/>
         <Suspense fallback= {<div>Loading...</div>}>
-        {/* <PopularItems/> */}
+        <Shops/>
         </Suspense>
         </Layout>
     </div>
   )
 }
 
-export default Home
+export default ShopPage

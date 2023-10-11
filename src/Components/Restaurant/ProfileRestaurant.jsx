@@ -39,12 +39,12 @@ function ProfileRestaurant() {
           Place: response.data.restData.Place,
         });
         setAddress({
-          street: response.data.restData.Address.street,
-          city: response.data.restData.Address.city,
-          state: response.data.restData.Address.state,
-          postalCode: response.data.restData.Address.postalCode,
+          street: response.data.restData?.Address?.street,
+          city: response.data.restData?.Address?.city,
+          state: response.data.restData?.Address?.state,
+          postalCode: response.data.restData?.Address?.postalCode,
         });
-        setImage(response.data.restData.Image)
+        setImage(response.data.restData?.Image)
       }
     );
   }, [is_edit]);
@@ -78,7 +78,7 @@ function ProfileRestaurant() {
       ) {
         toast.error("Please fill all field", {
           position: toast.POSITION.TOP_CENTER,
-          autoClose: 3000,
+          autoClose: 1500,
         });
       } else {
         RestaurantAxios.post("/editprofile", {
@@ -91,13 +91,13 @@ function ProfileRestaurant() {
             setIs_Edit(!is_edit)
             toast.success(response.data.message, {
               position: toast.POSITION.TOP_CENTER,
-              autoClose: 3000,
+              autoClose: 1500,
             });
           })
           .catch((err) => {
             toast.error(err.response.data.message, {
               position: toast.POSITION.TOP_CENTER,
-              autoClose: 3000,
+              autoClose: 1500,
             });
           });
       }
@@ -223,7 +223,7 @@ function ProfileRestaurant() {
           </label>
           {is_edit ? (
             <div className="border border-gray-300 rounded-sm lg:w-3/5 p-4 mb-5  w-full">
-              <div>
+              {/* <div>
                 <label htmlFor="email">Email:</label>
                 <input
                   type="text"
@@ -235,7 +235,7 @@ function ProfileRestaurant() {
                   }
                   placeholder={resData.Email}
                 />
-              </div>
+              </div> */}
               <div>
                 <label htmlFor="mobile">Phone:</label>
                 <input

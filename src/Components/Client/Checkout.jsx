@@ -92,9 +92,31 @@ function Checkout() {
     setPayment(payMethod);
   };
 
+  const initPayment = (data)=>{
+    const options = {
+      key: "rzp_test_dCipjxzSRdIN7F", 
+      amount: data.amount,
+      currency: data.currency,
+      order_id:data.id,
+      handler: async(response)=>{
+       try {
+        const { data } = await UserAxios.post('/verifypayment',{response,cartData})
+        console.log(data);
+        navigate("/orders");
+       } catch (error) {
+        console.log(error);
+       }
+      },
+      theme: {
+        color:"#CC313D"
+      }
+    };
+      const rzp1 = new window.Razorpay(options);
+      rzp1.open();
+  }
+
   const placeOrder = (payment) => {
     if (selectedAddressIndex == null) {
-      console.log(selectedAddressIndex);
       toast.error("Please select address", {
         position: toast.POSITION.TOP_CENTER,
         autoClose: 3000,
@@ -105,13 +127,17 @@ function Checkout() {
         addressIndex: selectedAddressIndex,
         cartData,
       }).then((response) => {
+        if(response.data.data){
+          initPayment(response.data.data)
+        }else{
         toast.success(response.data.message, {
           position: toast.POSITION.TOP_CENTER,
           autoClose: 3000,
         });
         navigate("/orders");
+      }
       }).catch((err)=>{
-        toast.error(err.response.data.message, {
+        toast.error(err.response?.data?.message, {
             position: toast.POSITION.TOP_CENTER,
             autoClose: 3000,
           });

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { CiWallet } from "react-icons/ci"
 
 import UserAxios from "../../Axios/UserAxios";
 import AddressModal from "../../assets/AddressModal";
@@ -270,7 +271,8 @@ function Profile() {
               {userData?.data?.user.Name}
             </span>
           </div>
-          <div className="h-2/3 border w-full bg-pink-100 lg:p-10">
+          <div className="h-2/3 border w-full bg-pink-100 lg:px-10 lg:py-2">
+           <span className="flex justify-center "><CiWallet className="text-2xl"/>:{userData?.data?.user.Wallet}</span> 
             <div className="h-full bg-slate-100 pt-4">
               <div className="flex border-b shadow-md">
                 <div>

@@ -1,20 +1,20 @@
 import React,{useState} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { BiSolidBarChartSquare, BiSolidUserRectangle,BiFoodMenu,BiCategory } from 'react-icons/bi'
+import { BiSolidBarChartSquare, BiSolidUserRectangle,BiFoodMenu,BiSolidHomeCircle } from 'react-icons/bi'
 import { AiOutlinePlusSquare } from 'react-icons/ai'
-import { MdSettingsApplications, MdOutlineFastfood } from 'react-icons/md'
+import { MdSettingsApplications, MdFastfood } from 'react-icons/md'
 
 function SideBar() {
   const [open, setOpen] = useState(true);
   const navigate = useNavigate()
   const Menus = [
-    { title: "Dashboard", icon: <BiSolidBarChartSquare/>, path: "/restaurant" },
-    { title: "Profile", icon: <BiSolidUserRectangle/>, path: "/restaurant/profile", gap: true },
-    { title: "Category", icon: <BiCategory/> , path: "/restaurant/category"},
-    { title: "Add Menu Item", icon: <AiOutlinePlusSquare/> , path: "/restaurant/addproduct"},
-    { title: "Menu Item", icon: <MdOutlineFastfood/>,  path: "/restaurant/products" },
-    { title: "Orders", icon: <BiFoodMenu/>,  path: "/restaurant/orders" },
-    { title: "Setting", icon: <MdSettingsApplications/>, path: "/restaurant/profile" },
+    { title: "Dashboard", icon: <BiSolidBarChartSquare/>, path: "/employee" },
+    { title: "Home", icon: <BiSolidHomeCircle/>, path: "/employee", gap: true },
+    { title: "Profile", icon: <BiSolidUserRectangle/>, path: "/employee/profile" },
+    // { title: "Add Product", icon: <AiOutlinePlusSquare/> , path: "/employee/addproduct"},
+    // { title: "Products", icon: <MdFastfood/>,  path: "/employee/products" },
+    { title: "Delivery History", icon: <BiFoodMenu/>,  path: "/employee/deliveryhistory" },
+    { title: "Setting", icon: <MdSettingsApplications/>, path: "/employee/profile" },
   ];
 
   return (
@@ -64,8 +64,8 @@ function SideBar() {
               } `}
               onClick={()=>navigate(Menu.path)}
             > 
-              <span className='text-2xl'>{Menu.icon}</span>
-              <span className={`${!open && "hidden"} origin-left duration-200 text-sm`}>
+              {Menu.icon}
+              <span className={`${!open && "hidden"} origin-left duration-200`}>
                 {Menu.title}
               </span>
             </li>

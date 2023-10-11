@@ -42,14 +42,14 @@ function Login(props) {
             setErrMsg("invalid entry");
             toast.error(respose.data.message, {
               position: toast.POSITION.TOP_CENTER,
-              autoClose: 3000,
+              autoClose: 1500,
             });
           }
         })
         .catch((error) => {
           toast.error(error.response.data.message, {
             position: toast.POSITION.TOP_CENTER,
-            autoClose: 3000,
+            autoClose: 1500,
           });
         });
     } else if (props.restaurant) {
@@ -69,14 +69,14 @@ function Login(props) {
             setErrMsg("invalid entry");
             toast.error(response.data.message, {
               position: toast.POSITION.TOP_CENTER,
-              autoClose: 3000,
+              autoClose: 1500,
             });
           }
         })
         .catch((error) => {
           toast.error(error.response.data.message, {
             position: toast.POSITION.TOP_CENTER,
-            autoClose: 3000,
+            autoClose: 1500,
           });
         });
     } else if (props.employee) {
@@ -92,14 +92,14 @@ function Login(props) {
             setErrMsg("invalid entry");
             toast.error(respose.data.message, {
               position: toast.POSITION.TOP_CENTER,
-              autoClose: 3000,
+              autoClose: 1500,
             });
           }
         })
         .catch((error) => {
           toast.error(error.response.data.message, {
             position: toast.POSITION.TOP_CENTER,
-            autoClose: 3000,
+            autoClose: 1500,
           });
         });
     } else {
@@ -115,14 +115,14 @@ function Login(props) {
             setErrMsg("invalid entry");
             toast.error(respose.data.message, {
               position: toast.POSITION.TOP_CENTER,
-              autoClose: 3000,
+              autoClose: 1500,
             });
           }
         })
         .catch((error) => {
           toast.error(error.response.data.message, {
             position: toast.POSITION.TOP_CENTER,
-            autoClose: 3000,
+            autoClose: 1500,
           });
         });
     }
