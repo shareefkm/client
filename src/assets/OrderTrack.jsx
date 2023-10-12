@@ -114,7 +114,8 @@ const OrderTrack = ({ isOpen, closeModal, orderItem }) => {
               <div>
                 <h1 className="text-xl font-bold underline">Order Item Detail</h1>
                 <h1 className="italic font-semibold">Product : {orderItem?.product?.name}</h1>
-                <h1 className="italic font-semibold">Sizr : {orderItem?.variant}</h1>
+                <h1 className="italic font-semibold">Size : {orderItem?.variant}</h1>
+                <h1 className="italic font-semibold">Quantity : {orderItem?.quantity}</h1>
                 <h1 className="italic font-semibold">Price : ₹ {parseFloat(orderItem?.price).toFixed(2)}</h1>
                 
               </div>

@@ -265,7 +265,7 @@ function AddProduct() {
             <label htmlFor="profImage" className="">
               <img
                 className="h-52 object-cover w-full"
-                src={imagePreviewUrl ? imagePreviewUrl : "/images/user.png"}
+                src={imagePreviewUrl && imagePreviewUrl }
                 alt=""
               />
             </label>

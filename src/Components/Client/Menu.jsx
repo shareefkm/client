@@ -16,10 +16,26 @@ function Menu() {
   const [filterdProducts, setFilterdProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState();
+  const [selectedPrice, setSelectedPrice] = useState();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isPriceDropdownOpen, setIsPriceDropdownOpen] = useState(false);
   const [item, setsetItem] = useState();
+
+  const price = [
+    {fieled: '₹ : 0 - 50',
+    startedAt: 0},
+    {fieled: '₹ : 50 - 100',
+    startedAt: 50},
+    {fieled: '₹ : 100 - 500',
+    startedAt: 100},
+    {fieled: '₹ : 500 - 1000',
+    startedAt: 500},
+    {fieled: '₹ : 1000+',
+    startedAt: 1000},
+  ]
   
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+  const togglePriceDropdown = () => setIsPriceDropdownOpen(!isPriceDropdownOpen);
 
   const navigate = useNavigate();
 
@@ -103,16 +119,46 @@ function Menu() {
   };
   const avrRating = calicAverRating();
 
-  const handleCategorySelection = (ind)=>{
-    setSelectedCategory(categories[ind])
-    if(selectedCategory){
-      const catId = selectedCategory?._id
-      const catProd = product.filter((products) => products.category === catId);
-      setFilterdProducts(catProd)
-      toggleDropdown()
+  const handleCategorySelection = (ind) => {
+    const selectedCat = categories[ind];
+    setSelectedCategory(selectedCat);
+  
+    if (selectedCat) {
+      const catId = selectedCat._id;
+      const catProd = product.filter((product) => product.category === catId);
+      toggleDropdown();
+      setFilterdProducts(catProd);
+    } else {
+      setFilterdProducts([]);
     }
-  }
- 
+  };
+
+  const handlePriceSelection = (indx) => {
+    const priceSelected = price[indx]
+    setSelectedPrice(priceSelected);
+    console.log(priceSelected);
+    let nearestPrice;
+    if(indx < price.length-1){
+       nearestPrice = price[indx+1].startedAt
+    }else{
+       nearestPrice = 5000
+    }
+  
+    if (priceSelected) {
+      const pricedProd = product.map((variant) => {
+        const filteredVariants = variant.variants.filter((priceBetween) => {
+          return (priceBetween.price >= priceSelected.startedAt && priceBetween.price < nearestPrice)
+        });
+        return { ...variant, variants: filteredVariants };
+      });
+      togglePriceDropdown();
+      setFilterdProducts(pricedProd);
+    }else{
+      setFilterdProducts([]);
+    }
+  };
+  
+  
   return (
     <div className="container mx-auto px-5 my-element pt-5">
       <ProductDetailModal isOpen={isModalOpen} close={closeModal} item={item} />
@@ -261,25 +307,59 @@ function Menu() {
                         </div>
                       </section>
                 </li>
+
+                <li className="font-semibold my-2 cursor-pointer">
+                <section
+                        aria-labelledby="information-heading"
+                        className=""
+                      >
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={togglePriceDropdown}
+                            className="flex items-center text-sm font-medium focus:outline-none"
+                          >
+                            {selectedPrice ? selectedPrice.fieled :  "Select Price"}
+                            <svg
+                              className={`w-4 h-4 ml-2 transition-transform ${
+                                isPriceDropdownOpen ? "" : "transform rotate-180"
+                              }`}
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M7.293 5.293a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L10 7.414l-2.293 2.293a1 1 0 01-1.414-1.414l3-3z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </button>
+
+                          {isPriceDropdownOpen && (
+                            <div
+                              className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg"
+                              style={{ zIndex: 10 }}
+                            >
+                              {price.map((option, index) => (
+                                <div
+                                  key={index}
+                                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 cursor-pointer text-left"
+                                  onClick={()=>handlePriceSelection(index)}
+                                >
+                                  {option.fieled}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </section>
+                </li>
               </ul>
             </div>
           </div>
         </div>
-        {/* <div className="p-2">
-          <div className="mb-10 sm:flex sm:justify-between block">
-          {isDropdownOpen && (
-          <ul className="dropdown">
-            {categories.map((cate, index) => (
-              <li key={index} className="category-item">
-                {console.log(cate)}
-                {cate.name}
-              </li>
-            ))}
-          </ul>
-        )}
-          </div>
-          
-        </div> */}
+        
 
         {filterdProducts.length !== 0
           ? filterdProducts?.map((prod) => (

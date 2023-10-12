@@ -14,7 +14,7 @@ function SideBar() {
     { title: "Add Menu Item", icon: <AiOutlinePlusSquare/> , path: "/restaurant/addproduct"},
     { title: "Menu Item", icon: <MdOutlineFastfood/>,  path: "/restaurant/products" },
     { title: "Orders", icon: <BiFoodMenu/>,  path: "/restaurant/orders" },
-    { title: "Setting", icon: <MdSettingsApplications/>, path: "/restaurant/profile" },
+    // { title: "Setting", icon: <MdSettingsApplications/>, path: "/restaurant/profile" },
   ];
 
   return (

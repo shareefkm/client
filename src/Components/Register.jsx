@@ -142,20 +142,25 @@ function Register(props) {
         }
         UserAxios.post("/register", { Name, Email, Mobile, Password }).then(
           (respose) => {
+            console.log(respose);
             if (respose.data.success) {
+              toast.success(respose.data.message, {
+                position: toast.POSITION.TOP_CENTER,
+                autoClose: 1500,
+              });
               navigate("/login");
             } else {
               setErrMsg("invalid entry");
               toast.error(respose.data.message, {
                 position: toast.POSITION.TOP_CENTER,
-                autoClose: 3000,
+                autoClose: 1500,
               });
             }
           }
         ).catch((err)=>{
           toast.error(err.respose.data.message, {
             position: toast.POSITION.TOP_CENTER,
-            autoClose: 3000,
+            autoClose: 1500,
           });
         });
       } else if (props.restaurant) {

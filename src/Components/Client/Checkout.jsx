@@ -15,6 +15,7 @@ function Checkout() {
   const [is_change, set_change] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cartData, setCartData] = useState();
+  const [couponCode, setCouponCode] = useState();
   const [address, setAddress] = useState([
     {
       street: "",
@@ -43,7 +44,7 @@ function Checkout() {
     UserAxios.get(`/getcart?id=${user._id}`).then((response) => {
       setCartData(response.data.cartData);
     });
-  }, []);
+  }, [is_change]);
 
   const handleSaveAddress = (userId) => {
     if (
@@ -119,7 +120,7 @@ function Checkout() {
     if (selectedAddressIndex == null) {
       toast.error("Please select address", {
         position: toast.POSITION.TOP_CENTER,
-        autoClose: 3000,
+        autoClose: 1500,
       });
     } else {
       UserAxios.post("/order", {
@@ -132,18 +133,41 @@ function Checkout() {
         }else{
         toast.success(response.data.message, {
           position: toast.POSITION.TOP_CENTER,
-          autoClose: 3000,
+          autoClose: 1500,
         });
         navigate("/orders");
       }
       }).catch((err)=>{
         toast.error(err.response?.data?.message, {
             position: toast.POSITION.TOP_CENTER,
-            autoClose: 3000,
+            autoClose: 1500,
           });
       })
     }
   };
+
+  const applayCoupon = ()=>{
+    UserAxios.post('/applaycoupon',{couponCode,cartData}).then((response)=>{
+      if(response.data.success){
+        toast.success(response.data.message, {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 1500,
+        });
+        setCouponCode('')
+        set_change(!is_change)
+      }else{
+        toast.error(response.data.message, {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 1500,
+        });
+      }
+    }).catch((error)=>{
+      toast.error(error.response?.data?.message, {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 1500,
+      });
+    })
+  }
 
   return (
     <div className="lg:ml-16 md:mr-16 mb-7 mt-7">
@@ -191,7 +215,20 @@ function Checkout() {
         </div>
 
         <div className="lg:w-1/3 h-screen">
-          <div className="h-2/3 border w-full bg-pink-100 lg:p-10">
+          <div className=" border w-full bg-pink-100 lg:p-10">
+          <label htmlFor="couponNo" className="block font-medium">
+            Enter Coupon
+          </label>
+          <input
+            type="text"
+            id="couponNo"
+            value={couponCode}
+            onChange={(e)=> setCouponCode(e.target.value)}
+            className="border border-gray-300 rounded-sm w-full bg-gray-300 py-1"
+            />
+             <button onClick={applayCoupon} className="text-off-White mb-5 mt-2 rounded-sm bg-cherry-Red p-1">
+            Applay Coupon
+          </button>
             <div className="h-full  shadow-md ">
               <div className="space-y-4 p-4">
                 <h1>

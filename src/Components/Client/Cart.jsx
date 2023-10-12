@@ -68,7 +68,7 @@ function Cart() {
   };
 
   const updateTotal = (amount, grandTotal)=>{
-    if(cartItem.length){
+    if(cartItem && cartItem.length){
       UserAxios.patch('/updatetotal',{cartId: cartId._id,amount,grandTotal}).then((response)=>{
         navigate('/checkout')
       })
