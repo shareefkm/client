@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import UserAxios from "../../Axios/UserAxios";
 import RestaurantAxios from "../../Axios/RestaurantAxios";
 import BillModal from "../../assets/BillModal";
+import Pagination from "../../assets/Pagination";
 // import { socket } from "../../Axios/EmployeeAxios";
 
 function OrdersData() {
@@ -14,6 +15,7 @@ function OrdersData() {
   const [itemData, setItemDta] = useState({});
   const [cartId, setCartId] = useState({});
   const [is_chage, setChange] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   let total = 0;
   let charges = 0;
@@ -43,6 +45,17 @@ function OrdersData() {
         });
       });
   }, []);
+
+  const itemsPerPage = 5;
+  const totalPages = Math.ceil(orderItem.length / itemsPerPage);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = orderItem.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   // useEffect(() => {
   //   socket.on("deliveryStatusUpdated", ({ prodId, orderStatus }) => {
@@ -128,7 +141,7 @@ function OrdersData() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200 border">
-                {orderItem.map((item) => (
+                {currentItems.map((item) => (
                   <React.Fragment key={item._id}>
                     {item.item
                       .filter((data) => data.product !== null)
@@ -181,6 +194,13 @@ function OrdersData() {
                 ))}
               </tbody>
             </table>
+          </div>
+          <div className="float-right mr-3 mt-3">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
           </div>
         </div>
       </div>

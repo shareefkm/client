@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import UserAxios from "../Axios/UserAxios.jsx";
 import { setCredentials } from "../Redux/Auth/UserSlice.jsx";
@@ -11,21 +12,28 @@ import EmployeeAxios from "../Axios/EmployeeAxios.jsx";
 import { employeeLogin } from "../Redux/Auth/EmployeeSlice.jsx";
 import AdminAxios from "../Axios/AdminAxios.jsx";
 import { adminLogin } from "../Redux/Auth/AdminSlice.jsx";
-import { toast } from "react-toastify";
+import ForgotPasswordModal from "../assets/ForgotPasswordModal.jsx";
 
 function Login(props) {
   const [Email, setEmail] = useState("");
-
   const [Password, setPassword] = useState("");
-
   const [errMsg, setErrMsg] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    setErrMsg("");
-  }, [Email, Password]);
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // useEffect(() => {
+  //   setErrMsg("");
+  // }, [Email, Password]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,7 +47,7 @@ function Login(props) {
             );
             navigate("/admin");
           } else {
-            setErrMsg("invalid entry");
+            // setErrMsg("invalid entry");
             toast.error(respose.data.message, {
               position: toast.POSITION.TOP_CENTER,
               autoClose: 1500,
@@ -61,12 +69,12 @@ function Login(props) {
               restaurantLogin({
                 token: data.token,
                 restaurant: data.restaurant.Name,
-                _id:data.restaurant._id
+                _id: data.restaurant._id,
               })
             );
             navigate("/restaurant");
           } else {
-            setErrMsg("invalid entry");
+            // setErrMsg("invalid entry");
             toast.error(response.data.message, {
               position: toast.POSITION.TOP_CENTER,
               autoClose: 1500,
@@ -85,11 +93,15 @@ function Login(props) {
           if (respose.data.success) {
             const data = respose.data;
             dispatch(
-              employeeLogin({ token: data.token, employee: data.employee.Name, _id:data.employee._id })
+              employeeLogin({
+                token: data.token,
+                employee: data.employee.Name,
+                _id: data.employee._id,
+              })
             );
             navigate("/employee");
           } else {
-            setErrMsg("invalid entry");
+            // setErrMsg("invalid entry");
             toast.error(respose.data.message, {
               position: toast.POSITION.TOP_CENTER,
               autoClose: 1500,
@@ -108,11 +120,15 @@ function Login(props) {
           if (respose.data.success) {
             const data = respose.data;
             dispatch(
-              setCredentials({ token: data.token, user: data.user.Name, _id:data.user._id})
+              setCredentials({
+                token: data.token,
+                user: data.user.Name,
+                _id: data.user._id,
+              })
             );
             navigate("/");
           } else {
-            setErrMsg("invalid entry");
+            // setErrMsg("invalid entry");
             toast.error(respose.data.message, {
               position: toast.POSITION.TOP_CENTER,
               autoClose: 1500,
@@ -177,15 +193,24 @@ function Login(props) {
             <div>
               <p>Don't have an account ?</p>
               <p className="text-cherry-Red">
-              {props.user && <Link to={"/register"}>Sign Up</Link>}
-              {props.restaurant && (
-                <Link to={"/restaurant/register"}>Sign Up</Link>
-              )}
-              {props.employee && <Link to={"/employee/register"}>Sign Up</Link>}
+                {props.user && ( <Link to={"/register"}>Sign Up</Link>)}
+                {props.restaurant && (
+                  <Link to={"/restaurant/register"}>Sign Up</Link>)}
+                {props.employee && (
+                  <Link to={"/employee/register"}>Sign Up</Link>)}
               </p>
             </div>
           )}
+          <p className="text-blue-700 cursor-pointer" onClick={handleOpenModal}>
+            Forgot Password
+          </p>
         </form>
+        {isModalOpen && (
+        <ForgotPasswordModal
+          closeModal={handleCloseModal}
+          userType={props.user ? "user" : props.restaurant ? "restaurant" : "employee"}
+        />
+      )}
       </div>
     </div>
   );

@@ -74,7 +74,7 @@ function Category() {
       const filteredProducts = categories.filter((product) =>
         product.name.toLowerCase().includes(searchTermLowercase)
       );
-      console.log(filteredProducts, searchTerm);
+      // console.log(filteredProducts, searchTerm);
       setFilterdCategories(filteredProducts);
     };
     fetchProducts();

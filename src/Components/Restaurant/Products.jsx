@@ -2,15 +2,16 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
-
 import { toast } from "react-toastify";
 
 import Button from "../../assets/Button";
 import RestaurantAxios from "../../Axios/RestaurantAxios";
+import Pagination from "../../assets/Pagination";
 
 function Products() {
   const [product, setProduct] = useState([]);
   const [is_deleted, setDeleted] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const restaurant = useSelector((state) => state.restaurant);
   const restaurant_id = restaurant._id;
@@ -21,6 +22,17 @@ function Products() {
       setProduct(response.data.product);
     });
   }, [is_deleted]);
+
+  const itemsPerPage = 5;
+  const totalPages = Math.ceil(product.length / itemsPerPage);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = product.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   const deletProduct = async (proId) => {
     const result = await Swal.fire({
@@ -86,7 +98,7 @@ function Products() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200 border">
-                {product.map((item) => (
+                {currentItems.map((item) => (
                   <tr key={item._id}>
                     <td className="flex px-6 py-2 whitespace-nowrap">
                       <img
@@ -133,6 +145,13 @@ function Products() {
               onClick={() => navigate("/restaurant/addproduct")}
               value={"Add Menu"}
               className={"w-40"}
+            />
+          </div>
+          <div className="float-right mr-3 mt-3">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
             />
           </div>
         </div>

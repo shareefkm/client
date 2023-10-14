@@ -44,35 +44,6 @@ const CategoryModal = ({ showModal, closeModal, categoryId, categoryToEdit, edit
     setImagePreviewUrl(imageToEdit)
   },[editMode])
 
-  
-
-  // const handleAddCategory = () => {
-  //   if (categoryName.trim() !== "") {
-  //     RestaurantAxios.post("/addcategory", { categoryName, restId, image })
-  //       .then((response) => {
-  //         console.log(response);
-  //         toast.success(response.data.message, {
-  //           position: toast.POSITION.TOP_CENTER,
-  //           autoClose: 1500,
-  //         });
-  //         closeModal();
-  //         setCategoryName("");
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //         toast.error(err.response?.data.message, {
-  //           position: toast.POSITION.TOP_CENTER,
-  //           autoClose: 1500,
-  //         });
-  //       });
-  //   } else {
-  //     toast.error("Please enter category name", {
-  //       position: toast.POSITION.TOP_CENTER,
-  //       autoClose: 1500,
-  //     });
-  //   }
-  // };
-
   const handleAddCategory = () => {
     if (categoryName.trim() !== "") {
       if (editMode && categoryId) {

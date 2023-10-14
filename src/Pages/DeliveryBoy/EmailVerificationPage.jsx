@@ -4,7 +4,7 @@ import VerifyEmail from "../../assets/VerifyEmail";
 function EmailVerificationPage() {
   return (
     <div>
-      <VerifyEmail value={"user"} />
+      <VerifyEmail value={"employee"} />
     </div>
   );
 }

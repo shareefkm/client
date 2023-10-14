@@ -6,6 +6,7 @@ import ProductDetailModal from "./ProductDetailModal";
 import RestaurantAxios from "../../Axios/RestaurantAxios";
 import UserAxios from "../../Axios/UserAxios";
 import Button from "../../assets/Button";
+import Pagination from "../../assets/Pagination";
 // import './Menu.css'
 
 function Menu() {
@@ -20,6 +21,7 @@ function Menu() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isPriceDropdownOpen, setIsPriceDropdownOpen] = useState(false);
   const [item, setsetItem] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
 
   const price = [
     {fieled: '₹ : 0 - 50',
@@ -33,6 +35,17 @@ function Menu() {
     {fieled: '₹ : 1000+',
     startedAt: 1000},
   ]
+
+  const itemsPerPage = 5;
+  const totalPages = Math.ceil(product.length / itemsPerPage);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = product.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
   
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const togglePriceDropdown = () => setIsPriceDropdownOpen(!isPriceDropdownOpen);
@@ -389,8 +402,11 @@ function Menu() {
                 <div className="border border-gray-500"></div>
               </div>
             ))
-          : product?.map((prod) => (
-              <div className="p-2" key={prod._id}>
+            
+          : 
+          <div className="pb-8 mb-5">{
+          currentItems?.map((prod) => (
+              <div className="pb-2" key={prod._id}>
                 <div className="mb-10 sm:flex sm:justify-between block">
                   <div className="">
                     <h4 className="text-xl font-bold mt-2">{prod.name}</h4>
@@ -416,6 +432,16 @@ function Menu() {
                 <div className="border border-gray-500"></div>
               </div>
             ))}
+            <div className="float-right mr-3 mt-3 pb-10">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+          </div>
+            }
+      
       </div>
     </div>
   );

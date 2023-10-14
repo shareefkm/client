@@ -11,6 +11,8 @@ import ProductsPage from '../Pages/Restaurant/ProductsPage'
 import OrdersDataPage from '../Pages/Restaurant/OrdersDataPage'
 import ProductEdit from '../Pages/Restaurant/ProductEdit'
 import CategoryPage from '../Pages/Restaurant/CategoryPage'
+import EmailVerificationPage from '../Pages/Restaurant/EmailVerificationPage'
+import ResetPassRest from '../Pages/Restaurant/ResetPassRest'
 
 function RestaurantRoute() {
     const isAuth = useSelector((state)=>state.restaurant)
@@ -19,7 +21,9 @@ function RestaurantRoute() {
       <Routes>
         <Route path='/' element = { isAuth.token ? <RestaurantHome/> : <RestaurantLogin/> }/>
         <Route path='/register' element = { isAuth.token ? <RestaurantHome/> : <RestaurantRegister/> }/>
+        <Route path="/verify/:id" element= { <EmailVerificationPage/>} />
         <Route path='/login' element = { isAuth.token ? <RestaurantHome/> : <RestaurantLogin/> }/>
+        <Route path='/resetPassword/:id' element = {<ResetPassRest/>}/>
         <Route path='/profile' element = { isAuth.token ? <RestaurantProfile/> : <RestaurantLogin/> }/>
         <Route path='/addproduct' element = { isAuth.token ? <ProductAdd/> : <RestaurantLogin/> }/>
         <Route path='/profile' element = { isAuth.token ? <RestaurantProfile/> : <RestaurantLogin/> }/>

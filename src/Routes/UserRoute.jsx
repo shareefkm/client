@@ -11,6 +11,7 @@ import OrderPage from '../Pages/Client/OrderPage'
 import ShopPage from '../Pages/Client/ShopPage'
 import MenuPage from '../Pages/Client/MenuPage'
 import EmailVerificationPage from '../Pages/Client/EmailVerificationPage'
+import ResetPass from '../Pages/Client/ResetPass'
 
 function UserRoute() {
   const IsAuth = useSelector((state) => state.user);
@@ -23,6 +24,7 @@ function UserRoute() {
         <Route path='/register' element = { IsAuth.token ? <Home/> : <UserRegister/>}/>
         <Route path="/verify/:id" element= { <EmailVerificationPage/>} />
         <Route path='/login' element = { IsAuth.token ? <Home/> : <UserLogin/>}/>
+        <Route path='/resetPassword/:id' element = {<ResetPass/>}/>
         <Route path='/profile' element = { IsAuth.token ? <UserProfile/> : <UserLogin/>}/>
         <Route path='/cart' element = { IsAuth.token ? <CartPage/> : <UserLogin/>}/>
         <Route path='/checkout' element = { IsAuth.token ? <CheckoutPage/> : <UserLogin/>}/>
