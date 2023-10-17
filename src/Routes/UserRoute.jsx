@@ -12,6 +12,7 @@ import ShopPage from '../Pages/Client/ShopPage'
 import MenuPage from '../Pages/Client/MenuPage'
 import EmailVerificationPage from '../Pages/Client/EmailVerificationPage'
 import ResetPass from '../Pages/Client/ResetPass'
+import OrederItemsPage from '../Pages/Client/OrederItemsPage'
 
 function UserRoute() {
   const IsAuth = useSelector((state) => state.user);
@@ -29,6 +30,7 @@ function UserRoute() {
         <Route path='/cart' element = { IsAuth.token ? <CartPage/> : <UserLogin/>}/>
         <Route path='/checkout' element = { IsAuth.token ? <CheckoutPage/> : <UserLogin/>}/>
         <Route path='/orders' element = { IsAuth.token ? <OrderPage/> : <UserLogin/>}/>
+        <Route path='/orderitems/:ordId' element = { IsAuth.token ? <OrederItemsPage/> : <UserLogin/>}/>
       </Routes>
     </div>
   )

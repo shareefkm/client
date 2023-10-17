@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import UserAxios from "../Axios/UserAxios";
+import RestaurantAxios from "../Axios/RestaurantAxios";
+import EmployeeAxios from "../Axios/EmployeeAxios";
 
 function VerifyEmail({value}) {
-  
+  console.log(value);
   const { id } = useParams();
   const [success, setSuccess] = useState(false);
   const [fail, setFail] = useState(false);
@@ -12,27 +14,30 @@ function VerifyEmail({value}) {
   useEffect(() => {
     const verifyEmail = async () => {
       try {
-        const response = await UserAxios.get(`verify/${id}`);
-        setSuccess(true);
-        console.log("Email verification response:", response.data);
+        if(value == "user"){
+          const response = await UserAxios.get(`/verify/${id}`);
+          setSuccess(true);
+          navigate("/login")
+          console.log("Email verification response:", response.data);
+        }else if(value == "restaurant"){
+          const response = await RestaurantAxios.get(`/verify/${id}`);
+          setSuccess(true);
+          navigate("/restaurant/login")
+          console.log("Email verification response:", response.data);
+        }else if(value == "employee"){
+          const response = await EmployeeAxios.get(`/verify/${id}`);
+          setSuccess(true);
+          navigate("/employee/login")
+          console.log("Email verification response:", response.data);
+        }
       } catch (error) {
         setFail(true);
         console.error("Error verifying email:", error);
       }
     };
-
     verifyEmail();
   }, [id]);
 
-  const handleNavigate = ()=>{
-    if(value == "user"){
-      navigate("/login")
-    }else if(value == "restaurant"){
-      navigate("/restaurant/login")
-    }else if(value == "employee"){
-      navigate("/employee/login")
-    }
-  }
 
   return (
     <div>
@@ -57,7 +62,7 @@ function VerifyEmail({value}) {
               <div className="py-10 text-center">
                 <a
                   href="#"
-                  onClick={handleNavigate}
+                  // onClick={handleNavigate}
                   className="px-12 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3"
                 >
                   Login

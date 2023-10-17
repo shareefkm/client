@@ -2,41 +2,44 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
-import { useNavigate, useParams } from "react-router-dom";
 
 import UserAxios from "../../Axios/UserAxios";
 import OrderTrack from "../../assets/OrderTrack";
+import { useParams } from "react-router-dom";
 
-function Orders() {
+function OrderItems() {
   let total = 0;
   let charges = 0;
   let discount = 0;
   let grandTotal = 0;
-  const [orderItem, setOrderItem] = useState([]);
+  const [orderItem, setOrderItem] = useState();
   const [cartId, setCartId] = useState({});
   const [is_chage, setChange] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemData, setItemDta] = useState({});
 
-  const navigate = useNavigate()
+  const { ordId } = useParams()
+
   const user = useSelector((state) => state.user);
 
   useEffect(() => {
-    UserAxios.get(`/getorders?id=${user._id}`).then((response) => {
-      const items = response.data.orders;
+    UserAxios.get(`/getorderitems?id=${ordId}`).then((response) => {
+      const items = response?.data?.orderItems;
       setOrderItem(items);
+      // console.log(items);
+      // console.log(response);
     });
   }, [is_chage]);
 
   const openModal = (ele) => {
     setIsModalOpen(true);
-    setItemDta(ele);
+    setItemDta(ele)
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  const cancelOrder = async (orderId, itemId) => {
+  const cancelOrder = async (orderId,itemId) => {
     const result = await Swal.fire({
       title: "Do you really want to cancel this Order?",
       icon: "warning",
@@ -48,7 +51,7 @@ function Orders() {
       UserAxios.patch("/cancelorder", {
         itemId,
         orderId,
-        userId: user._id,
+        userId:user._id
       }).then((response) => {
         setChange(!is_chage);
         toast.success(response.data.message, {
@@ -61,9 +64,7 @@ function Orders() {
 
   return (
     <div className="p-10">
-      <div className="flex items-center justify-center pb-2 text-2xl font-semibold italic underline">
-        <h1>Orders</h1>
-      </div>
+    <div className="flex items-center justify-center pb-2 text-2xl font-semibold italic underline"><h1>Order Items</h1></div>
       <div className="border md:flex">
         <div className="h-full w-full">
           <div className="w-full overflow-x-auto">
@@ -71,95 +72,98 @@ function Orders() {
               <thead className=" bg-table-blue text-off-White">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
-                    Order Date
+                    PRODUCT
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
-                    Total Items
+                    QUANTITY
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
-                    Payment Type
+                    RATE
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
-                    Total Amount
+                    PRICE
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
-                    
+                    Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200 border">
-                {orderItem.map((item) => {
-                  const formattedDate = new Date(
-                    item.updatedAt
-                  ).toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  });
-                  return (
-                    <Fragment>
-                      <tr key={item._id}>
-                        {console.log(item)}
+                {/* {orderItem.item.map((item) => ( */}
+                  <Fragment>
+                    {orderItem?.item.map((ele) => (
+                      <tr key={ele._id}>
+                    {console.log(ele)}
                         <td
                           className="flex px-6 py-2 whitespace-nowrap"
-                          // onClick={() => openModal()}
+                          onClick={() => openModal(ele)}
                         >
-                          {formattedDate}
+                          <img
+                            src={ele.product?.images}
+                            alt=""
+                            className="h-10 w-10 mr-10"
+                          />
+
+                          {ele.product?.name}
                         </td>
                         <td className="px-6 py-2 whitespace-nowrap">
-                          {item.item.length}
+                          {ele?.quantity}
                         </td>
                         <td className="px-6 py-2 whitespace-nowrap">
-                          {item.paymentType}
+                          {ele.product?.price}
                         </td>
                         <td className="px-6 py-2 whitespace-nowrap">
-                        {item.grandTotal}
+                          {ele?.price}
+                          <h1 hidden> {(total = total + ele.price)}</h1>
                         </td>
-                        
                         <td className="px-6 py-2 whitespace-nowrap flex justify-center">
-                          {item.is_delivered ? (
-                            <div className="bg-green-500 text-white rounded-full p-2">
-                              <svg
-                                className="w-6 h-6"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M5 13l4 4L19 7"
-                                ></path>
-                              </svg>
-                            </div>
-                          ) : (
-                            <h1>{"Pending"}</h1>
-                          )}
-                        </td>
-                        <td className="px-6 py-2 whitespace-nowrap">
-                        <button className="text-green-700" onClick={()=>navigate(`/orderitems/${item._id}`)}>View</button>
+                          {(ele.orderStatus === "Delivered") ? (<div className="bg-green-500 text-white rounded-full p-2">
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M5 13l4 4L19 7"
+                          ></path>
+                        </svg>
+                      </div>) : (
+                            <button
+                              // onClick={() => cancelOrder(item._id,ele._id)}
+                              className="text-red-600 hover:text-red-900"
+                            >
+                              Cancel
+                            </button>)
+                          }
                         </td>
                       </tr>
-                      <OrderTrack
-                        isOpen={isModalOpen}
-                        closeModal={closeModal}
-                        orderItem={itemData}
-                      />
-                    </Fragment>
-                  );
-                })}
+                    ))}
+                    <OrderTrack
+                      isOpen={isModalOpen}
+                      closeModal={closeModal}
+                      orderItem={itemData}
+                    />
+                  </Fragment>
+                {/* // ))} */}
+                <tr className="px-6 py-2 whitespace-nowra justify-between items-end">
+                  <td></td>
+                  <td></td>
+                  <td className="text-lg font-semibold">Total:</td>
+                  <td className="text-end text-lg font-semibold">{total}</td>
+                </tr>
               </tbody>
             </table>
           </div>
         </div>
+        
       </div>
     </div>
   );
 }
 
-export default Orders;
+export default OrderItems;

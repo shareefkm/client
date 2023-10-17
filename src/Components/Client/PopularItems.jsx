@@ -11,7 +11,7 @@ import Button from "../../assets/Button";
 import StarRating from "../../assets/StarRating";
 import ProductDetailModal from "./ProductDetailModal";
 
-function PopularItems({ products, restaurants }) {
+function PopularItems({ products, restaurants, filteredProducts, location }) {
   let search = products;
   const navigate = useNavigate();
   const [userRating, setUserRating] = useState(0);
@@ -58,6 +58,8 @@ function PopularItems({ products, restaurants }) {
     setIsModalOpen(true);
   };
 
+  
+
   return (
     <div className="container mx-auto px-5">
       <div className="text-3xl font-semibold mb-4 flex items-center justify-center">
@@ -92,6 +94,37 @@ function PopularItems({ products, restaurants }) {
                   <h4 className="text-lg text-gray-500">size : {item.variants[0].name}</h4>
                   <h4 className="text-lg text-gray-500">
                     Price : {item.variants[0].offerPrice}
+                  </h4>
+                </div>
+              </div>
+            )) : (location !== "" && filteredProducts?.length !==0) ? filteredProducts?.map((item, index) => (
+              <div
+                key={index}
+                className="mb-10 cursor-pointer"
+                onClick={() => navigate(`/menu/${item._id}`)}
+              >
+                {/* {console.log(item)} */}
+
+                <div className="flex items-center justify-between">
+                  <img
+                    src={item.Image}
+                    alt={item.Name}
+                    className="rounded-md sm:w-64 sm:h-44 w-full h-72"
+                  />
+                </div>
+                <div className="flex justify-between">
+                  <h4 className="text-xl font-bold mt-2">{item.Name}</h4>
+                  <h4 className="text-xl font-bold mt-3 ml-auto mr-1">
+                    {isNaN(avrRating) ? "N/A" : avrRating}
+                  </h4>
+                  <h4 className="flex text-xl mt-4 mr-6 text-yellow">
+                    <BiSolidStarHalf />
+                  </h4>
+                </div>
+                <div>
+                  <h4 className="text-lg text-gray-500">{item.Place}</h4>
+                  <h4 className="text-lg text-gray-500">
+                    {item.Address?.state}
                   </h4>
                 </div>
               </div>

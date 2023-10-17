@@ -95,7 +95,7 @@ const Map = () => {
   return (
     <div style={{ height: "100vh", width: "100%" }}>
       <GoogleMapReact
-        bootstrapURLKeys={{ key: process.env.REACT_APP_GOOGLE_API_KEY }} // Your Google Maps API key goes here
+        bootstrapURLKeys={{ key:  'AIzaSyBdVl-cTICSwYKrZ95SuvNw7dbMuDt1KG0' }} // Your Google Maps API key goes here
         defaultCenter={center}
         defaultZoom={zoom}
       >
