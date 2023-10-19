@@ -1,7 +1,7 @@
 import React,{useState} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { BiSolidBarChartSquare, BiSolidUserRectangle,BiFoodMenu,BiSolidHomeCircle } from 'react-icons/bi'
-import { AiOutlinePlusSquare } from 'react-icons/ai'
+import { BsChatSquareText } from 'react-icons/bs'
 import { MdSettingsApplications, MdFastfood } from 'react-icons/md'
 
 function SideBar() {
@@ -11,7 +11,7 @@ function SideBar() {
     { title: "Dashboard", icon: <BiSolidBarChartSquare/>, path: "/employee" },
     { title: "Home", icon: <BiSolidHomeCircle/>, path: "/employee", gap: true },
     { title: "Profile", icon: <BiSolidUserRectangle/>, path: "/employee/profile" },
-    // { title: "Add Product", icon: <AiOutlinePlusSquare/> , path: "/employee/addproduct"},
+    { title: "Chat", icon: <BsChatSquareText/> , path: "/employee/chat"},
     // { title: "Products", icon: <MdFastfood/>,  path: "/employee/products" },
     { title: "Delivery History", icon: <BiFoodMenu/>,  path: "/employee/deliveryhistory" },
     { title: "Setting", icon: <MdSettingsApplications/>, path: "/employee/profile" },

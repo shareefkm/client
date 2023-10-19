@@ -8,6 +8,7 @@ import ProfileEmployee from '../Pages/DeliveryBoy/ProfileEmployee'
 import DeliveryHistory from '../Pages/DeliveryBoy/DeliveryHistory '
 import EmailVerificationPage from '../Pages/DeliveryBoy/EmailVerificationPage'
 import ResetPassEmpl from '../Pages/DeliveryBoy/ResetPassEmpl'
+import ChatEmployee from '../Pages/DeliveryBoy/ChatEmployee'
 
 function EmployeeRoute() {
   const isAuth = useSelector((state)=>state.employee)
@@ -22,6 +23,7 @@ function EmployeeRoute() {
         <Route path='/resetPassword/:id' element = {<ResetPassEmpl/>}/>
         <Route path='/profile' element = { isAuth.token ? <ProfileEmployee/> : <EmployeeLogin/> }/>
         <Route path='/deliveryhistory' element = { isAuth.token ? <DeliveryHistory/> : <EmployeeLogin/> }/>
+        <Route path='/chat' element = { isAuth.token ? <ChatEmployee/> : <EmployeeLogin/> }/>
       </Routes>
     </div>
   )

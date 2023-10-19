@@ -53,10 +53,11 @@ function OrderItems() {
         orderId,
         userId:user._id
       }).then((response) => {
+        console.log(response);
         setChange(!is_chage);
         toast.success(response.data.message, {
           position: toast.POSITION.TOP_CENTER,
-          autoClose: 3000,
+          autoClose: 1500,
         });
       });
     }
@@ -93,7 +94,6 @@ function OrderItems() {
                   <Fragment>
                     {orderItem?.item.map((ele) => (
                       <tr key={ele._id}>
-                    {console.log(ele)}
                         <td
                           className="flex px-6 py-2 whitespace-nowrap"
                           onClick={() => openModal(ele)}
@@ -134,7 +134,7 @@ function OrderItems() {
                         </svg>
                       </div>) : (
                             <button
-                              // onClick={() => cancelOrder(item._id,ele._id)}
+                              onClick={() => cancelOrder(orderItem._id,ele._id)}
                               className="text-red-600 hover:text-red-900"
                             >
                               Cancel

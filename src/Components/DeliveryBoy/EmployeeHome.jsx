@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom"
 import { useSelector } from "react-redux";
 
 import EmployeeAxios from "../../Axios/EmployeeAxios";
+import Chat from "../../assets/Chat";
+import userInstance from "../../Axios/UserAxios";
 // import { socket } from "../../Axios/EmployeeAxios";
 function EmployeeHome() {
   const [emplDetail, setEmplDetail] = useState({});
@@ -44,6 +46,13 @@ function EmployeeHome() {
       // });
     });
   };
+  const createChat = (orderId)=>{
+    EmployeeAxios.post('/chat',{id:orderId, senderRole:'employee'}).then((res)=>{
+      navigate('/employee/chat')
+      console.log(res);
+    })
+  }
+
   const renderOrderDetails = (orderId) => {
     const selectedOrder = orders?.ordersDetails.find(
       (order) => order._id === orderId
@@ -71,6 +80,7 @@ function EmployeeHome() {
               <br /> Postal Code: {selectedOrder.address[0].postalCode}
               <br /> State: {selectedOrder.address[0].state}
             </p>
+            <p className="text-green-600 cursor-pointer" onClick={()=>createChat(selectedOrder._id)}>Chat</p>
           </div>
           <div className="Restaurant sm:ml-12">
             <ul>

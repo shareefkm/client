@@ -100,9 +100,10 @@ function Orders() {
                     year: "numeric",
                   });
                   return (
-                    <Fragment>
+                    <>
+                    {item.item.length !== 0 &&
+                      <Fragment>
                       <tr key={item._id}>
-                        {console.log(item)}
                         <td
                           className="flex px-6 py-2 whitespace-nowrap"
                           // onClick={() => openModal()}
@@ -151,7 +152,9 @@ function Orders() {
                         orderItem={itemData}
                       />
                     </Fragment>
-                  );
+                          }
+                          </>
+                  )
                 })}
               </tbody>
             </table>

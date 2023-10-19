@@ -29,8 +29,8 @@ function Navbar() {
       display: 'About us',
     },
     {
-      path: '/',
-      display: 'Contact',
+      path: user.token ? '/chat' : '/',
+      display: user.token ? 'Chat' : 'Contact',
     },
     user.token
     ? {

@@ -5,7 +5,8 @@ export const userSlice = createSlice({
     initialState:{
         _id: null,
         user:null,
-        token:null
+        token:null,
+        selectedChat:null,
     },
     reducers:{
         setCredentials:(state,action)=>{
@@ -18,6 +19,9 @@ export const userSlice = createSlice({
             state.user = null
             state.token = null
             state._id = null
+        },
+        setSelectedChat:(state,action)=>{
+            state.selectedChat = action.payload
         }
     }
 })

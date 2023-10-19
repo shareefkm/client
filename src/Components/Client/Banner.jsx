@@ -110,7 +110,6 @@ function Banner() {
       setFilteredProducts(filtered);
     }
   }, [latitude, longitude, location]);
-  console.log(location);
 
   return (
     <>

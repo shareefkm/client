@@ -1,11 +1,9 @@
 import React from 'react'
-
+import Chat from '../../assets/Chat'
 import Header from '../../Layouts/Header/Header'
-import EmployeeHome from '../../Components/DeliveryBoy/EmployeeHome'
 import SideBar from '../../Components/DeliveryBoy/SideBar'
-import Map from '../../assets/Map'
 
-function EmployeeHomePage() {
+function ChatEmployee() {
   return (
     <div>
       <Header value={'/employee/login'} employee={true}/>
@@ -14,8 +12,7 @@ function EmployeeHomePage() {
           <SideBar/>
         </div>
         <div className='md:w-full'>
-        <EmployeeHome/>
-        {/* <Map/> */}
+       <Chat senderRole={'employee'} reciverRole={'user'}/>
         </div>
       </div>
       
@@ -23,4 +20,4 @@ function EmployeeHomePage() {
   )
 }
 
-export default EmployeeHomePage
+export default ChatEmployee
