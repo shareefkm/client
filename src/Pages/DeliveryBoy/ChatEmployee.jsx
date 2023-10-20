@@ -12,7 +12,7 @@ function ChatEmployee() {
           <SideBar/>
         </div>
         <div className='md:w-full'>
-       <Chat senderRole={'employee'} reciverRole={'user'}/>
+       <Chat senderRole={'employee'} reciverRole={'userId'}/>
         </div>
       </div>
       

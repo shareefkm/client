@@ -11,7 +11,7 @@ import App from "./App.jsx";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <ThemeProvider>
       <ToastContainer />
       <Provider store={Store}>
@@ -20,5 +20,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </PersistGate>
       </Provider>
     </ThemeProvider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );

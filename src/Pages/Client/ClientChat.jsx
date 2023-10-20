@@ -8,7 +8,7 @@ function ClientChat() {
     <div>
     <Header user={true}/>
     <Layout>
-      <Chat senderRole={'user'} reciverRole={'employee'}/>
+      <Chat senderRole={'user'} reciverRole={'employeeId'}/>
     </Layout>
   </div>
   )

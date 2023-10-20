@@ -1,18 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { io } from "socket.io-client";
+import { AiOutlineArrowLeft } from 'react-icons/ai'
 import UserAxios from "../Axios/UserAxios";
 import EmployeeAxios from "../Axios/EmployeeAxios";
+import { USER_API } from "../Constants/API";
 // import { fetchChats, openChat } from "../../api/CommonApi";
+
+const baseUrl = USER_API
 
 function Chat({ senderRole, reciverRole }) {
   const [inboxChats, setInboxChats] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [allMessages, setAllMessages] = useState([]);
-  const [selectedChat, setSelectedChat] = useState("");
+  const [selectedChat, setSelectedChat] = useState({});
   const [socket, setSocket] = useState(null);
+  const [isChatOpen, setIsChatOpen] = useState(false)
+  const scroll = useRef()
 
-  const baseUrl = import.meta.env.VITE_BACKEND_URL;
+  useEffect(()=>{
+    if(allMessages){
+      scroll.current?.scrollIntoView({behavior: "smooth"})
+    }
+  },[allMessages])
+  
 
   const currentPersonId = useSelector((state) =>
     senderRole === "employee" ? state.employee._id : state.user._id
@@ -22,15 +33,21 @@ function Chat({ senderRole, reciverRole }) {
 
   // Fetch initial chats
   useEffect(() => {
-    EmployeeAxios.get('/chat').then((res)=>{
+    if(senderRole === 'employee')
+    {EmployeeAxios.get('/chat').then((res)=>{
       setInboxChats(res.data.chats);
-    })
+    })}
+    else {
+    UserAxios.get('/chat').then((res)=>{
+      setInboxChats(res.data.chats);
+    })}
   }, [senderRole]);
-  console.log(inboxChats);
 
-  // Handle sending a message
-  const sendMessage = () => {
-    if (newMessage.trim() === "") return; // Prevent sending empty messages
+  const sendMessage = (e) => {
+    e.preventDefault()
+    if (newMessage.trim() === "") return; 
+
+    console.log('send message -----');
     const newMessageData = {
       content: newMessage,
       chatId: selectedChat._id,
@@ -38,26 +55,24 @@ function Chat({ senderRole, reciverRole }) {
       role: currentPersonRole,
       createdAt: new Date(),
     };
-    if(senderRole === 'employee'){
-      EmployeeAxios.post('/sendmessage',{newMessageData}).then((res)=>{
-        console.log(res);
-      })
-    }else{
-      UserAxios.post('/sendmessage',{newMessageData}).then((res)=>{
-        console.log(res);
-      })
-    }
-    socket.emit("send message", newMessageData, selectedChat._id);
-    setNewMessage(""); // Clear the input field after sending
+
+    socket.emit("send message", newMessageData,selectedChat._id)
+    setNewMessage("") 
   };
 
   // Open a chat and load its messages
   const chatOpen = (chat) => {
     setSelectedChat(chat);
-   EmployeeAxios.get(`/openchat?chatId=${chat._id}`).then((res) => {
-      setAllMessages(res.data.result);
-      console.log(res);
-    });
+    setIsChatOpen(true)
+    if(senderRole === 'employee'){
+      EmployeeAxios.get(`/openchat?chatId=${chat._id}`).then((res) => {
+         setAllMessages(res.data.result);
+       });
+    }else{
+      UserAxios.get(`/openchat?chatId=${chat._id}`).then((res) => {
+        setAllMessages(res.data.result);
+      });
+    }
   };
 
   // Initialize the socket connection
@@ -73,18 +88,23 @@ function Chat({ senderRole, reciverRole }) {
     return () => {
       newSocket.disconnect();
     };
-  }, [baseUrl]);
+  }, [baseUrl,]);
 
   // Join the room and handle incoming messages
   useEffect(() => {
     if (socket && selectedChat) {
       socket.emit("joinroom", selectedChat._id, currentPersonId);
-      socket.on("response", (newMessage) => {
-        setAllMessages((prev) => [...prev, newMessage]);
-      });
     }
-  }, [socket, selectedChat, currentPersonId]);
+  }, [socket,selectedChat,currentPersonId]);
 
+  useEffect(()=>{
+    if (socket && selectedChat) {
+    socket.on("response", (newMessage) => {
+      console.log(newMessage,'dasj');
+      setAllMessages((prev) => [...prev, newMessage]);
+    });
+  }
+  },[socket])
   return (
     <div className="container mx-auto">
       <div className="min-w-full border rounded lg:grid lg:grid-cols-3">
@@ -114,7 +134,7 @@ function Chat({ senderRole, reciverRole }) {
             </div>
           </div>
 
-          <ul className=" overflow-auto h-[32rem]">
+          <ul className={`${isChatOpen ?'hidden lg:overflow-auto lg:h-[32rem] lg:block' : 'overflow-auto lg:h-[32rem]'}`}>
             <h2 className="my-2 mb-2 ml-2 text-lg text-gray-600">Chats</h2>
             <li>
               {inboxChats.map((chat) => {
@@ -127,15 +147,15 @@ function Chat({ senderRole, reciverRole }) {
                     <img
                       className="object-cover w-10 h-10 rounded-full"
                       src={
-                        chat?.userId.Image ? 
-                        chat?.userId.Image : "/images/user.png"
+                        chat?.[reciverRole]?.Image ? 
+                        chat?.[reciverRole]?.Image : "/images/user.png"
                       }
                       alt="username"
                     />
                     <div className="w-full pb-2">
                       <div className="flex justify-between">
                         <span className="block ml-2 font-semibold text-gray-600">
-                          {chat?.userId.Name}
+                          {chat?.[reciverRole]?.Name}
                         </span>
                         <span className="block ml-2 text-sm text-gray-600">10 unread messages</span>
                       </div>
@@ -147,28 +167,29 @@ function Chat({ senderRole, reciverRole }) {
             </li>
           </ul>
         </div>
-        <div className="hidden lg:col-span-2 lg:block">
+       <div className={`${!isChatOpen ? 'hidden lg:col-span-2 lg:block' : 'lg:col-span-2 lg:block'}`}>
           <div className="w-full">
             <div className="relative flex items-center p-3 border-b border-gray-300">
+              <AiOutlineArrowLeft className={`lg:hidden`} onClick={()=>setIsChatOpen(false)}/>
               <img
                 className="object-cover w-10 h-10 rounded-full"
                 src={
                   selectedChat?.[reciverRole]?.Image
                     ? selectedChat?.[reciverRole]?.Image
-                    : ""
+                    : "/images/user.png"
                 }
                 alt="username"
               />
               <span className="block ml-2 font-bold text-gray-600">
                 {selectedChat?.[reciverRole]?.Name}
               </span>
-              <span className="absolute w-3 h-3 bg-green-600 rounded-full left-10 top-3"></span>
+              {/* <span className="absolute w-3 h-3 bg-green-600 rounded-full left-10 top-3"></span> */}
             </div>
 
             <div className="relative w-full p-6 overflow-y-auto h-[28rem] ">
               {allMessages.map((data, index) => (
-                <ul key={index} className="space-y-2">
-                  <li
+                <ul key={index} className="space-y-2" ref={scroll} >
+                  <li 
                     className={`${
                       currentPersonId == data.senderId._id
                         ? "flex justify-end"
@@ -192,16 +213,17 @@ function Chat({ senderRole, reciverRole }) {
               ))}
             </div>
 
-            <div className="flex items-center justify-between w-full p-3 border-t border-gray-300">
+            <form onSubmit={sendMessage} className="flex items-center justify-between w-full p-3 border-t border-gray-300">
               <input
                 type="text"
                 placeholder="Message"
+                value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 className="block w-full py-2 pl-4 mx-3 bg-gray-100 rounded-full outline-none focus:text-gray-700"
                 name="message"
                 required
               />
-              <button type="submit" onClick={sendMessage}>
+              <button type='submit'>
                 <svg
                   className="w-5 h-5 text-gray-500 origin-center transform rotate-90"
                   xmlns="http://www.w3.org/2000/svg"
@@ -211,7 +233,7 @@ function Chat({ senderRole, reciverRole }) {
                   <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
                 </svg>
               </button>
-            </div>
+            </form>
           </div>
         </div>
       </div>
