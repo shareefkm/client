@@ -106,7 +106,6 @@ function Orders() {
                       <tr key={item._id}>
                         <td
                           className="flex px-6 py-2 whitespace-nowrap"
-                          // onClick={() => openModal()}
                         >
                           {formattedDate}
                         </td>
@@ -138,7 +137,7 @@ function Orders() {
                                 ></path>
                               </svg>
                             </div>
-                          ) : (
+                          ) : (item.grandTotal === 0)?(<h1 className="text-cherry-Red">Rejected</h1>):(
                             <h1>{"Pending"}</h1>
                           )}
                         </td>

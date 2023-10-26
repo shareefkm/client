@@ -1,17 +1,19 @@
 import React, { useEffect, useState,Fragment } from "react";
 import { useNavigate } from "react-router-dom"
 import { useSelector } from "react-redux";
+import { io } from "socket.io-client";
 
 import EmployeeAxios from "../../Axios/EmployeeAxios";
-import Chat from "../../assets/Chat";
-import userInstance from "../../Axios/UserAxios";
-// import { socket } from "../../Axios/EmployeeAxios";
+import { USER_API } from "../../Constants/API";
+const baseUrl = USER_API
+
 function EmployeeHome() {
   const [emplDetail, setEmplDetail] = useState({});
   const [orders, setOrders] = useState([]);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [isDropdownVisible, setDropdownVisibility] = useState(false);
   const [is_statusUpdated, setStatusUpdated] = useState(false);
+  const [socket, setSocket] = useState(null);
 
   const navigate = useNavigate()
 
@@ -32,19 +34,36 @@ function EmployeeHome() {
     setSelectedOrderId(orderId === selectedOrderId ? null : orderId);
     setDropdownVisibility(!isDropdownVisible);
   };
+  
+  // Initialize the socket connection
+  useEffect(() => {
+    const newSocket = io(baseUrl);
+    setSocket(newSocket);
+
+    newSocket.on("error", (error) => {
+      console.log(error);
+    });
+
+    // Cleanup socket connection when the component unmounts
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [baseUrl,]);
 
   const updateDeliveryStatus = (prodId, orderStatus) => {
+    const updateStatus = {
+      prodId,
+      emplId: employee._id,
+      orderStatus,
+    }
     EmployeeAxios.patch("/updatedelivery", {
       prodId,
       emplId: employee._id,
       orderStatus,
     }).then((response) => {
       setStatusUpdated(!is_statusUpdated);
-      // socket.emit('deliveryStatusUpdate', {
-      //   prodId,
-      //   orderStatus,
-      // });
     });
+    socket.emit("update-order-status", { updateStatus });
   };
   const createChat = (orderId)=>{
     EmployeeAxios.post('/chat',{id:orderId, senderRole:'employee'}).then((res)=>{

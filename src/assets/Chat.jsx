@@ -5,7 +5,6 @@ import { AiOutlineArrowLeft } from 'react-icons/ai'
 import UserAxios from "../Axios/UserAxios";
 import EmployeeAxios from "../Axios/EmployeeAxios";
 import { USER_API } from "../Constants/API";
-// import { fetchChats, openChat } from "../../api/CommonApi";
 
 const baseUrl = USER_API
 
@@ -46,8 +45,6 @@ function Chat({ senderRole, reciverRole }) {
   const sendMessage = (e) => {
     e.preventDefault()
     if (newMessage.trim() === "") return; 
-
-    console.log('send message -----');
     const newMessageData = {
       content: newMessage,
       chatId: selectedChat._id,
@@ -134,7 +131,7 @@ function Chat({ senderRole, reciverRole }) {
             </div>
           </div>
 
-          <ul className={`${isChatOpen ?'hidden lg:overflow-auto lg:h-[32rem] lg:block' : 'overflow-auto lg:h-[32rem]'}`}>
+          <ul className={`${isChatOpen ?'hidden lg:overflow-auto lg:h-[32rem] lg:block' : 'overflow-auto h-[32rem]'}`}>
             <h2 className="my-2 mb-2 ml-2 text-lg text-gray-600">Chats</h2>
             <li>
               {inboxChats.map((chat) => {

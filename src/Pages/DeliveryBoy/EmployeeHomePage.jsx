@@ -3,7 +3,7 @@ import React from 'react'
 import Header from '../../Layouts/Header/Header'
 import EmployeeHome from '../../Components/DeliveryBoy/EmployeeHome'
 import SideBar from '../../Components/DeliveryBoy/SideBar'
-import Map from '../../assets/Map'
+// import Map from '../../assets/Map'
 
 function EmployeeHomePage() {
   return (

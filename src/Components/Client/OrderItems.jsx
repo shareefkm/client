@@ -26,8 +26,6 @@ function OrderItems() {
     UserAxios.get(`/getorderitems?id=${ordId}`).then((response) => {
       const items = response?.data?.orderItems;
       setOrderItem(items);
-      // console.log(items);
-      // console.log(response);
     });
   }, [is_chage]);
 
@@ -90,7 +88,6 @@ function OrderItems() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200 border">
-                {/* {orderItem.item.map((item) => ( */}
                   <Fragment>
                     {orderItem?.item.map((ele) => (
                       <tr key={ele._id}>
@@ -132,7 +129,11 @@ function OrderItems() {
                             d="M5 13l4 4L19 7"
                           ></path>
                         </svg>
-                      </div>) : (
+                      </div>) :(ele.is_canceled)?(<button
+                              className="text-red-600 hover:text-red-900"
+                            >
+                              Rejected
+                            </button>):(
                             <button
                               onClick={() => cancelOrder(orderItem._id,ele._id)}
                               className="text-red-600 hover:text-red-900"
@@ -149,7 +150,6 @@ function OrderItems() {
                       orderItem={itemData}
                     />
                   </Fragment>
-                {/* // ))} */}
                 <tr className="px-6 py-2 whitespace-nowra justify-between items-end">
                   <td></td>
                   <td></td>

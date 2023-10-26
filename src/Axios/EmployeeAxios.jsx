@@ -1,5 +1,4 @@
 import axios from "axios";
-import io from "socket.io-client";
 
 import { EMPLOYEE_API } from "../Constants/API";
 import { Store } from "../Redux/Store";

@@ -13,6 +13,7 @@ import ProductEdit from '../Pages/Restaurant/ProductEdit'
 import CategoryPage from '../Pages/Restaurant/CategoryPage'
 import EmailVerificationPage from '../Pages/Restaurant/EmailVerificationPage'
 import ResetPassRest from '../Pages/Restaurant/ResetPassRest'
+import OrdersItemPage from '../Pages/Restaurant/OrdersItemPage'
 
 function RestaurantRoute() {
     const isAuth = useSelector((state)=>state.restaurant)
@@ -30,6 +31,7 @@ function RestaurantRoute() {
         <Route path='/category' element = { isAuth.token ? <CategoryPage/> : <RestaurantLogin/> }/>
         <Route path='/products' element = { isAuth.token ? <ProductsPage/> : <RestaurantLogin/> }/>
         <Route path='/orders' element = { isAuth.token ? <OrdersDataPage/> : <RestaurantLogin/> }/>
+        <Route path='/ordersitems/:id' element = { isAuth.token ? <OrdersItemPage/> : <RestaurantLogin/> }/>
         <Route path='/editproduct/:productId' element = { isAuth.token ? <ProductEdit/> : <RestaurantLogin/> }/>
       </Routes>
     </div>

@@ -2,12 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
+import { io } from "socket.io-client";
 
 import UserAxios from "../../Axios/UserAxios";
 import RestaurantAxios from "../../Axios/RestaurantAxios";
 import BillModal from "../../assets/BillModal";
 import Pagination from "../../assets/Pagination";
-// import { socket } from "../../Axios/EmployeeAxios";
+import { USER_API } from "../../Constants/API";
+import { useNavigate } from "react-router-dom";
+
+const baseUrl = USER_API
 
 function OrdersData() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -16,13 +20,16 @@ function OrdersData() {
   const [cartId, setCartId] = useState({});
   const [is_chage, setChange] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [socket, setSocket] = useState(null);
+  const [orderStatus,setOrderStatus] = useState()
+
+  const navigate = useNavigate()
 
   let total = 0;
   let charges = 0;
   let discount = 0;
   let grandTotal = 0;
 
-  const user = useSelector((state) => state.user);
   const restaurant = useSelector((state) => state.restaurant);
 
   useEffect(() => {
@@ -34,14 +41,14 @@ function OrdersData() {
         } else {
           toast.error("No orders", {
             position: toast.POSITION.TOP_CENTER,
-            autoClose: 3000,
+            autoClose: 1500,
           });
         }
       })
       .catch((err) => {
         toast.error(err.response.data.message, {
           position: toast.POSITION.TOP_CENTER,
-          autoClose: 3000,
+          autoClose: 1500,
         });
       });
   }, []);
@@ -57,24 +64,33 @@ function OrdersData() {
     setCurrentPage(page);
   };
 
-  // useEffect(() => {
-  //   socket.on("deliveryStatusUpdated", ({ prodId, orderStatus }) => {
-  //     const updatedOrders = orderItem.map((order) => {
-  //       if (order._id === prodId) {
-  //         return {
-  //           ...order,
-  //           orderStatus: orderStatus,
-  //         };
-  //       }
-  //       return order;
-  //     });
-  //     setOrderItem(updatedOrders);
-  //   });
+   // Initialize the socket connection
+   useEffect(() => {
+    const newSocket = io(baseUrl);
+    setSocket(newSocket);
 
-  //   return () => {
-  //     socket.off("deliveryStatusUpdated");
-  //   };
-  // }, []);
+    newSocket.on("error", (error) => {
+      console.log(error);
+    });
+
+    // Cleanup socket connection when the component unmounts
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [baseUrl]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("order-status-update", (data) => {
+        setOrderStatus(data)
+        console.log("Order status update received:", data);
+      });
+
+      return () => {
+        socket.disconnect();
+      };
+    }
+  }, [socket]);
 
   const openModal = (ele) => {
     setModalOpen(true);
@@ -85,23 +101,25 @@ function OrdersData() {
     setModalOpen(false);
   };
 
-  const cancelCartItem = async (id) => {
+  const cancelOrder = async (orderId,itemId) => {
     const result = await Swal.fire({
-      title: "Do you really want to delete this product?",
+      title: "Do you really want to cancel this Order?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
-      cancelButtonText: "No, cancel",
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
     });
     if (result.isConfirmed) {
-      UserAxios.patch("/cancelcartitem", {
-        itemId: id,
-        cartId: cartId._id,
+      UserAxios.patch("/cancelorder", {
+        itemId,
+        orderId,
+        userId:user._id
       }).then((response) => {
+        console.log(response);
         setChange(!is_chage);
         toast.success(response.data.message, {
           position: toast.POSITION.TOP_CENTER,
-          autoClose: 3000,
+          autoClose: 1500,
         });
       });
     }
@@ -118,80 +136,76 @@ function OrdersData() {
         <div className="h-full w-full">
           <div className="w-full overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className=" bg-table-blue">
+              <thead className=" bg-table-blue text-off-White">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-off-White uppercase tracking-wider">
-                    PRODUCT
+                  <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
+                    #
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-off-White uppercase tracking-wider">
-                    QUANTITY
+                  <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
+                  Order Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-off-White uppercase tracking-wider">
-                    RATE
+                  <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
+                    Payment Type
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-off-White uppercase tracking-wider">
-                    PRICE
+                  <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
+                    Total Amount
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-off-White uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-off-White uppercase tracking-wider">
-                    Actions
+                  <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
+                    
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200 border">
-                {currentItems.map((item) => (
+                {currentItems.map((item, ind) =>{
+                   const formattedDate = new Date(
+                    item.createdAt
+                  ).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  });
+                  return (
                   <React.Fragment key={item._id}>
-                    {item.item
-                      .filter((data) => data.product !== null)
-                      .map((ele, ind) => (
-                        <tr key={ele._id}>
+                    
+                        <tr >
                           <td
                             className="flex px-6 py-2 whitespace-nowrap"
                             onClick={() => openModal(item)}
                           >
-                            <img
-                              src={ele.product?.images}
-                              alt=""
-                              className="h-10 w-10 mr-10"
-                            />
-                            {ele.product?.name}
+                            {ind+1}
                           </td>
                           <td className="px-6 py-2 whitespace-nowrap">
-                            {ele?.quantity}
+                          {formattedDate}
                           </td>
                           <td className="px-6 py-2 whitespace-nowrap">
-                            {ele.product?.price}
+                            {item.paymentType}
                           </td>
+                          {item.item.map((ele)=>{
+                            <h1 hidden>{total = total+ele.price}</h1>
+                          })}
                           <td className="px-6 py-2 whitespace-nowrap">
-                            {ele?.price}
-                            <h1 hidden> {(total = total + ele.price)}</h1>
+                            {total}
                           </td>
                           <td className="px-6 py-2 whitespace-nowrap">
                             {
                               <p
-                                // onClick={() => cancelCartItem(item.productId._id)}
                                 className="text-yellow hover:text-amber-600"
                               >
-                                {ele.orderStatus}
+                                {item.paymentStatus}
                               </p>
                             }
                           </td>
                           <td className="px-6 py-2 whitespace-nowrap">
                             {
-                              <button
-                                // onClick={() => cancelCartItem(item.productId._id)}
-                                className="text-red-600 hover:text-red-900"
-                              >
-                                Cancel
-                              </button>
+                              <button className="text-green-700" onClick={()=>navigate(`/restaurant/ordersitems/${item._id}`)}>View</button>
                             }
                           </td>
                         </tr>
-                      ))}
                   </React.Fragment>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>
