@@ -4,6 +4,7 @@ import { TbSettings2 } from 'react-icons/tb'
 import { PiUserSquare } from 'react-icons/pi'
 import { RiCoupon2Line } from 'react-icons/ri'
 import { BiSearchAlt, BiChart, BiBarChartSquare } from 'react-icons/bi'
+import { MdDeliveryDining,MdOutlineRestaurant } from 'react-icons/md'
 import CouponModall from "../../assets/CouponModall"; 
 function SideBox() {
   const [open, setOpen] = useState(true);
@@ -23,6 +24,8 @@ function SideBox() {
     { title: "Dashboard", src:<BiBarChartSquare/>,  path:()=>navigate('/admin') },
     { title: "Accounts", src: <PiUserSquare/>,  path:()=>navigate('/admin'), gap: true },
     { title: "Coupon", src: <RiCoupon2Line/>, path: () => navigate('/admin/coupon') }, 
+    { title: "Restaurants", src: <MdOutlineRestaurant/>,  path:()=>navigate('/admin/restaurants') },
+    { title: "Employees", src: <MdDeliveryDining/>,  path:()=>navigate('/admin/employees') },
     { title: "Search", src: <BiSearchAlt/>,  path:()=>navigate('/admin') },
     { title: "Analytics", src: <BiChart/>,  path:()=>navigate('/admin') },
     { title: "Setting", src: <TbSettings2/>,  path:()=>navigate('/admin') },

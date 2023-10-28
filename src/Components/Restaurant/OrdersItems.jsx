@@ -18,6 +18,7 @@ function OrdersItems() {
   const [itemData, setItemDta] = useState({});
   const [cartId, setCartId] = useState({});
   const [is_chage, setChange] = useState(false);
+  const [is_statusUpdated, setStatusUpdated] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [socket, setSocket] = useState(null);
   const [orderStatus,setOrderStatus] = useState()
@@ -61,7 +62,7 @@ function OrdersItems() {
     RestaurantAxios.get(`/getorderitems?id=${id}`).then((response)=>{
       setOrderItem(response.data.orderItems)
     })
-  },[is_chage])
+  },[is_chage,is_statusUpdated])
    // Initialize the socket connection
    useEffect(() => {
     const newSocket = io(baseUrl);
@@ -98,6 +99,23 @@ function OrdersItems() {
   const closeModal = () => {
     setModalOpen(false);
   };
+
+  const updateDeliveryStatus = (prodId, orderStatus) => {
+    const updateStatus = {
+      prodId,
+      orderId:orderItem._id,
+      orderStatus,
+    }
+    RestaurantAxios.patch("/updatedelivery", {
+      prodId,
+      orderId:orderItem._id,
+      orderStatus,
+    }).then((response) => {
+      setStatusUpdated(!is_statusUpdated);
+    });
+    socket.emit("update-order-status", { updateStatus });
+  };
+
 
   const cancelOrder = async (orderId,itemId) => {
     const result = await Swal.fire({
@@ -161,7 +179,7 @@ function OrdersItems() {
                           {}
                           <td
                             className="flex px-6 py-2 whitespace-nowrap"
-                            onClick={() => openModal(item)}
+                            onClick={() => openModal(orderItem)}
                           >
                             <img
                               src={ele.product?.images}
@@ -183,11 +201,13 @@ function OrdersItems() {
                           </td>
                           <td className="px-6 py-2 whitespace-nowrap">
                             {(ele.is_canceled)?(<h1 className="text-cherry-Red">Order Rejected</h1>):
-                              <p
-                                className="text-yellow hover:text-amber-600"
+                              <button
+                                className="text-green-300 bg-cherry-Red cursor-pointer p-1 flex items-center justify-center rounded"
+                                onClick={()=>{updateDeliveryStatus(ele._id, ele.orderStatus)}}
+                                
                               >
-                                {ele.orderStatus}
-                              </p>
+                                {(ele.orderStatus === "Pending" ? "Accept" : ele.orderStatus)}
+                              </button>
                             }
                           </td>
                           <td className="px-6 py-2 whitespace-nowrap flex justify-center">
@@ -207,7 +227,7 @@ function OrdersItems() {
                                   d="M5 13l4 4L19 7"
                                 ></path>
                               </svg>
-                            </div>) :(ele.is_canceled)?(<h1 className="text-cherry-Red">Order Rejected</h1>):(
+                            </div>) :(ele.is_canceled)?(<button className="text-cherry-Red">Order Rejected</button>):(
                                    <button
                                    onClick={() => cancelOrder(orderItem._id, ele._id)}
                                    className="text-red-600 hover:text-red-900"

@@ -12,7 +12,7 @@ function Cart() {
   let total = 0;
   let charges = 0;
   let discount = 0;
-  let grandTotal = 0
+  let grandTotal = 0;
   const [cartItem, setCartItem] = useState([]);
   const [cartId, setCartId] = useState({});
   const [is_chage, setChange] = useState(false);
@@ -26,12 +26,12 @@ function Cart() {
       setCartId(response.data.cartData);
     });
   }, [is_chage]);
-  const handleChangeQuantity = (id,variant, action) => {
+  const handleChangeQuantity = (id, variant, action) => {
     UserAxios.patch("/changequantity", {
       itemId: id,
       cartId: cartId._id,
       action,
-      variant
+      variant,
     })
       .then((response) => {
         setChange(!is_chage);
@@ -61,28 +61,35 @@ function Cart() {
         setChange(!is_chage);
         toast.success(response.data.message, {
           position: toast.POSITION.TOP_CENTER,
-          autoClose: 3000,
+          autoClose: 1500,
         });
       });
     }
   };
 
-  const updateTotal = (amount, grandTotal)=>{
-    if(cartItem && cartItem.length){
-      UserAxios.patch('/updatetotal',{cartId: cartId._id,amount,grandTotal}).then((response)=>{
-        navigate('/checkout')
-      })
-    }else{
+  const updateTotal = (amount, grandTotal) => {
+    if (cartItem && cartItem.length) {
+      UserAxios.patch("/updatetotal", {
+        cartId: cartId._id,
+        amount,
+        grandTotal,
+      }).then((response) => {
+        navigate("/checkout");
+      });
+    } else {
       console.log("error");
       toast.error("Your cart is empty", {
         position: toast.POSITION.TOP_CENTER,
         autoClose: 3000,
       });
     }
-  }
+  };
 
   return (
     <div className="p-10">
+      <div className="flex items-center justify-center pb-2 text-2xl font-semibold italic underline">
+        <h1>Cart Items</h1>
+      </div>
       <div className="border md:flex">
         <div className="h-full md:w-2/3">
           <div className="w-full overflow-x-auto">
@@ -118,7 +125,9 @@ function Cart() {
                         alt=""
                         className="h-10 w-10 mr-10"
                       />
-                      {item.productId?.name}{" - "}{item.variant}
+                      {item.productId?.name}
+                      {" - "}
+                      {item.variant}
                     </td>
                     <td className="px-6 py-2 whitespace-nowrap">
                       <div className="border border-lime-50 items-center justify-between flex">
@@ -126,11 +135,15 @@ function Cart() {
                           className="bg-slate-200 pl-3"
                           onClick={() => {
                             if (item.quantity > 1) {
-                              handleChangeQuantity(item.productId?._id,item.variant, {
-                                decrement: true,
-                              });
+                              handleChangeQuantity(
+                                item.productId?._id,
+                                item.variant,
+                                {
+                                  decrement: true,
+                                }
+                              );
                             } else {
-                              cancelCartItem(item.productId?._id,item.variant);
+                              cancelCartItem(item.productId?._id, item.variant);
                             }
                           }}
                         >
@@ -140,9 +153,13 @@ function Cart() {
                         <button
                           className="bg-slate-200 pr-3"
                           onClick={() => {
-                            handleChangeQuantity(item.productId?._id,item.variant,{
-                              increment: true,
-                            });
+                            handleChangeQuantity(
+                              item.productId?._id,
+                              item.variant,
+                              {
+                                increment: true,
+                              }
+                            );
                           }}
                         >
                           <span className="ml-2">+</span>
@@ -162,7 +179,9 @@ function Cart() {
                     <td className="px-6 py-2 whitespace-nowrap">
                       {
                         <button
-                          onClick={() => cancelCartItem(item.productId?._id, item.variant)}
+                          onClick={() =>
+                            cancelCartItem(item.productId?._id, item.variant)
+                          }
                           className="text-red-600 hover:text-red-900"
                         >
                           Remove
@@ -176,30 +195,54 @@ function Cart() {
                   <td></td>
                   <td></td>
                   <td className="text-lg font-semibold">Total:</td>
-                  <td className="text-end text-lg font-semibold float-right">{parseFloat(total).toFixed(2)}</td>
+                  <td className="text-end text-lg font-semibold float-right">
+                    {parseFloat(total).toFixed(2)}
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
           <div className="">
-            <Button value={"continue shoping"} onClick={() => navigate("/")} className={'mt-28'}/>
+            <Button
+              value={"continue shoping"}
+              onClick={() => navigate("/")}
+              className={"mt-28"}
+            />
           </div>
         </div>
         <div className="p-3 md:w-1/3">
           <div className="border h-full w-full shadow-md ">
             <div className="space-y-4 p-4">
               <h1>
-                Total: <span className="float-right">{parseFloat(total).toFixed(2)}</span>
+                Total:{" "}
+                <span className="float-right">
+                  {parseFloat(total).toFixed(2)}
+                </span>
               </h1>
-              <h1>Charges:<span className="float-right">{charges}</span></h1>
-              <h1>Discount: <span className="float-right">{discount}</span></h1>
-              <p hidden>{grandTotal = total + charges - discount}</p>
-              <h1>Grand Total:  <span className="float-right">{parseFloat(grandTotal).toFixed(2)}</span></h1>
+              <h1>
+                Charges:<span className="float-right">{charges}</span>
+              </h1>
+              <h1>
+                Discount: <span className="float-right">{discount}</span>
+              </h1>
+              <p hidden>{(grandTotal = total + charges - discount)}</p>
+              <h1>
+                Grand Total:{" "}
+                <span className="float-right">
+                  {parseFloat(grandTotal).toFixed(2)}
+                </span>
+              </h1>
             </div>
             <br />
             <br />
             <div>
-              <Button value={"Proceed to checkout"} onClick={()=> {updateTotal(total,grandTotal)}} className={"mt-12 w-full"}/>
+              <Button
+                value={"Proceed to checkout"}
+                onClick={() => {
+                  updateTotal(total, grandTotal);
+                }}
+                className={"mt-12 w-full"}
+              />
             </div>
           </div>
         </div>
@@ -209,4 +252,3 @@ function Cart() {
 }
 
 export default Cart;
-

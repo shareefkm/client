@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
-import axios from 'axios';
+import axios from "axios";
 
 import UserAxios from "../Axios/UserAxios.jsx";
 import RestaurantAxios from "../Axios/RestaurantAxios.jsx";
@@ -69,7 +69,7 @@ function Register(props) {
   const [id_Proof, setid_Proof] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
 
-  const [suggetion,setSuggetion] = useState(false)
+  const [suggetion, setSuggetion] = useState(false);
   const [locationSuggestions, setLocationSuggestions] = useState([]);
 
   // useEffect(() => {
@@ -105,7 +105,7 @@ function Register(props) {
   //   const address = `${Place}`;
   //   if (address) {
   //     const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key='AIzaSyBdVl-cTICSwYKrZ95SuvNw7dbMuDt1KG0'`;
-  
+
   //     axios.get(geocodeUrl)
   //       .then(response => {
   //         console.log(response);
@@ -126,40 +126,41 @@ function Register(props) {
   //   }
   // }, [Place]);
 
-   // Function to handle location suggestion selection
-//    const handleLocationSuggestion = async () => {
-//     // Get location suggestions when the user types
-//     const suggestions = await getLocationSuggestions(Place);
-//     setLocationSuggestions(suggestions);
-// };
+  // Function to handle location suggestion selection
+  //    const handleLocationSuggestion = async () => {
+  //     // Get location suggestions when the user types
+  //     const suggestions = await getLocationSuggestions(Place);
+  //     setLocationSuggestions(suggestions);
+  // };
 
- // Function to get location suggestions from Mapbox Geocoding API
- const getLocationSuggestions = async (query) => {
-  const MAPBOX_API_KEY = 'pk.eyJ1Ijoieml5YWR1IiwiYSI6ImNsa2tyb3hycjBmMHQza28zY2JyeGE5bXEifQ.uK6EfNoLf37b1K6oFdjFJw';
-  const endpoint = `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json`;
-  const params = {
+  // Function to get location suggestions from Mapbox Geocoding API
+  const getLocationSuggestions = async (query) => {
+    const MAPBOX_API_KEY =
+      "pk.eyJ1Ijoieml5YWR1IiwiYSI6ImNsa2tyb3hycjBmMHQza28zY2JyeGE5bXEifQ.uK6EfNoLf37b1K6oFdjFJw";
+    const endpoint = `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json`;
+    const params = {
       access_token: MAPBOX_API_KEY,
-      types: 'place,locality,neighborhood', // Limit results to places only
+      types: "place,locality,neighborhood", // Limit results to places only
       limit: 5, // Number of suggestions to retrieve
-      country:"IN"
-  };
+      country: "IN",
+    };
 
-  try {
+    try {
       const response = await axios.get(endpoint, { params });
       console.log(response);
       return response.data.features;
-  } catch (error) {
-      console.error('Error fetching location suggestions:', error);
+    } catch (error) {
+      console.error("Error fetching location suggestions:", error);
       return [];
-  }
-};
+    }
+  };
 
-// Function to handle location suggestion selection
-const handleLocationSuggestion = async (query) => {
-  // Get location suggestions when the user types
-  const suggestions = await getLocationSuggestions(query);
-  setLocationSuggestions(suggestions);
-};
+  // Function to handle location suggestion selection
+  const handleLocationSuggestion = async (query) => {
+    // Get location suggestions when the user types
+    const suggestions = await getLocationSuggestions(query);
+    setLocationSuggestions(suggestions);
+  };
 
   const handleAddressChange = (event) => {
     const { name, value } = event.target;
@@ -204,7 +205,7 @@ const handleLocationSuggestion = async (query) => {
     Object.values(validAddress).every((valid) => valid) && id_Proof !== null;
 
   useEffect(() => {
-    const result = Place.trim().length !== 0
+    const result = Place.trim().length !== 0;
     setValidPlace(result);
   }, [Place]);
 
@@ -236,8 +237,16 @@ const handleLocationSuggestion = async (query) => {
         if (Password !== conformPsw) {
           return;
         }
-        UserAxios.post("/register", { Name, Email, Mobile, Password }).then(
-          (respose) => {
+        UserAxios.post("/register", {
+          Name,
+          Email,
+          Mobile,
+          Password,
+          Place,
+          longitude,
+          latitude,
+        })
+          .then((respose) => {
             console.log(respose);
             if (respose.data.success) {
               toast.success(respose.data.message, {
@@ -252,13 +261,13 @@ const handleLocationSuggestion = async (query) => {
                 autoClose: 1500,
               });
             }
-          }
-        ).catch((err)=>{
-          toast.error(err.respose.data.message, {
-            position: toast.POSITION.TOP_CENTER,
-            autoClose: 1500,
+          })
+          .catch((err) => {
+            toast.error(err.respose.data.message, {
+              position: toast.POSITION.TOP_CENTER,
+              autoClose: 1500,
+            });
           });
-        });
       } else if (props.restaurant) {
         RestaurantAxios.post("/register", {
           Name,
@@ -267,9 +276,13 @@ const handleLocationSuggestion = async (query) => {
           Password,
           Place,
           longitude,
-          latitude
+          latitude,
         }).then((respose) => {
           if (respose.data.success) {
+            toast.success(respose.data.message, {
+              position: toast.POSITION.TOP_CENTER,
+              autoClose: 1500,
+            });
             navigate("/restaurant/login");
           } else {
             setErrMsg("invalid entry");
@@ -287,8 +300,15 @@ const handleLocationSuggestion = async (query) => {
           Password,
           address,
           id_Proof,
+          Place,
+          longitude,
+          latitude,
         }).then((respose) => {
           if (respose.data.success) {
+            toast.success(respose.data.message, {
+              position: toast.POSITION.TOP_CENTER,
+              autoClose: 1500,
+            });
             navigate("/employee/login");
           } else {
             setErrMsg("invalid entry");
@@ -429,73 +449,74 @@ const handleLocationSuggestion = async (query) => {
             />
           </div>
 
-          {props.restaurant && (
-            <div className="mb-6">
-              <label
-                htmlFor="place"
-                className="block text-sm font-medium text-gray-700"
+          {/* {props.restaurant && ( */}
+          <div className="mb-6">
+            <label
+              htmlFor="place"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Location
+              <span className={validPlace ? "text-green-600 ml-2" : "hidden"}>
+                <FontAwesomeIcon icon={faCheck} />
+              </span>
+              <span
+                className={
+                  validPlace || !Place ? "hidden" : "text-red-600 ml-2"
+                }
               >
-                Location
-                <span className={validPlace ? "text-green-600 ml-2" : "hidden"}>
-                  <FontAwesomeIcon icon={faCheck} />
-                </span>
-                <span
-                  className={
-                    validPlace || !Place ? "hidden" : "text-red-600 ml-2"
-                  }
-                >
-                  <FontAwesomeIcon icon={faTimes} />
-                </span>
-              </label>
-              <input
-                type="place"
-                id="place"
-                autoComplete="off"
-                onChange={(e) => {
-                  setSuggetion(true)
-                  setPlace(e.target.value);
-                  handleLocationSuggestion(e.target.value);
-                }}
-                value={Place}
-                required
-                aria-invalid={validPlace ? false : "true"}
-                aria-describedby="uidnote"
-                onFocus={() => {
-                  setPlaceFocus(true);
-                }}
-                onBlur={() => {
-                  setPlaceFocus(false);
-                }}
-                className="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-indigo-200"
-                placeholder="Enter your Location"
-              />
-               {/* Display location suggestions */}
-          <ul className='absolute z-0 mt-2 w-full bg-main border border-border rounded-lg shadow-lg'>
-               {
-                            suggetion && locationSuggestions.map((suggestion) => (
-                                <li key={suggestion.id}
-                                className="p-2 hover:bg-subMain cursor-pointer"
-                                >
-                                    {/* Assuming you want to display the place name as a suggestion */}
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setSuggetion(false)
-                                            setPlace(suggestion.place_name); // Update the input field with the selected suggestion
-                                            setLocationSuggestions([]); // Clear the suggestions list
-                                            // Now you can also get the longitude and latitude from suggestion.geometry.coordinates
-                                            const [long, lat] = suggestion?.geometry.coordinates;
-                                            setLatitude(lat)
-                                            setLongitude(long)
-                                        }}
-                                    >
-                                        {suggestion.place_name}
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-            </div>
-          )}
+                <FontAwesomeIcon icon={faTimes} />
+              </span>
+            </label>
+            <input
+              type="place"
+              id="place"
+              autoComplete="off"
+              onChange={(e) => {
+                setSuggetion(true);
+                setPlace(e.target.value);
+                handleLocationSuggestion(e.target.value);
+              }}
+              value={Place}
+              required
+              aria-invalid={validPlace ? false : "true"}
+              aria-describedby="uidnote"
+              onFocus={() => {
+                setPlaceFocus(true);
+              }}
+              onBlur={() => {
+                setPlaceFocus(false);
+              }}
+              className="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-indigo-200"
+              placeholder="Enter your Location"
+            />
+            {/* Display location suggestions */}
+            <ul className="absolute z-10 mt-2  bg-off-White border border-border rounded-lg shadow-lg">
+              {suggetion &&
+                locationSuggestions.map((suggestion) => (
+                  <li
+                    key={suggestion.id}
+                    className="p-2 hover:bg-subMain cursor-pointer"
+                  >
+                    {/* Assuming you want to display the place name as a suggestion */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSuggetion(false);
+                        setPlace(suggestion.place_name); // Update the input field with the selected suggestion
+                        setLocationSuggestions([]); // Clear the suggestions list
+                        // Now you can also get the longitude and latitude from suggestion.geometry.coordinates
+                        const [long, lat] = suggestion?.geometry.coordinates;
+                        setLatitude(lat);
+                        setLongitude(long);
+                      }}
+                    >
+                      {suggestion.place_name}
+                    </button>
+                  </li>
+                ))}
+            </ul>
+          </div>
+          {/* // )} */}
           <div className="mb-6">
             <label
               htmlFor="password"
@@ -702,9 +723,9 @@ const handleLocationSuggestion = async (query) => {
           <div>
             <p>Allready have an account ?</p>
             <p className="text-cherry-Red">
-            {props.user && <Link to={"/login"}>Login</Link>}
-            {props.restaurant && <Link to={"/restaurant/login"}>Login</Link>}
-            {props.employee && <Link to={"/employee/login"}>Login</Link>}
+              {props.user && <Link to={"/login"}>Login</Link>}
+              {props.restaurant && <Link to={"/restaurant/login"}>Login</Link>}
+              {props.employee && <Link to={"/employee/login"}>Login</Link>}
             </p>
           </div>
         </form>

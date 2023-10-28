@@ -35,7 +35,7 @@ const Chart = ({ totalSaleData }) => {
       curve: 'smooth'
     },
     title: {
-      text: 'Fundamental Analysis of Stocks',
+      text: 'Fundamental Analysis of Sales',
       align: 'left'
     },
     subtitle: {

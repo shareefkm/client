@@ -14,7 +14,16 @@ const BillModal = ({ isOpen, closeModal, orderItem }) => {
   const [image, setImage] = useState([]);
 
   let total = 0;
-
+  
+  const referNum = orderItem._id?.slice(-6)
+  const formattedDate = new Date(
+    orderItem.createdAt
+  ).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+  console.log(orderItem);
   const restaurant = useSelector((state) => state.restaurant);
   const restaurant_id = restaurant._id;
 
@@ -52,7 +61,7 @@ const BillModal = ({ isOpen, closeModal, orderItem }) => {
             </button>
           </div>
           <hr className="border-t-2 border-blue-500 my-4" />
-          <div className="embed-container flex justify-between items-center">
+          <div className="embed-container flex justify-between">
             <div>
               <div>
                 <h1 className="text-xl font-bold">{resData.Name}</h1>
@@ -79,12 +88,26 @@ const BillModal = ({ isOpen, closeModal, orderItem }) => {
                 </div>
               </div>
             </div>
-            <div className="border p-3 justify-between shadow-md">
-              <p>Reference No.:</p>
-              <p>Invoice Date:</p>
-              <p>Location:</p>
-              <p>Carrier</p>
-              <p></p>
+            <div className="justify-between font-semibold italic">
+              <div>
+              <div className="border shadow-md p-3">
+                <h1 >Reference No.: {referNum}</h1>
+                <h1 >Invoice Date: {formattedDate}</h1>
+              </div>
+              <div className="pt-7">
+                <h1 className="text-sm font-bold">Carrier.</h1>
+                <div>
+                  {orderItem && orderItem.employeeId && orderItem.employeeId ? (
+                    <div>
+                      <h1 className="italic">Name : {orderItem.employeeId.Name}</h1>
+                      <h1 className="italic">Contact : {orderItem.employeeId.Mobile}</h1>
+                    </div>
+                  ) : (
+                    <div>Address information not available.</div>
+                  )}
+                </div>
+              </div>
+            </div>
             </div>
           </div>
           <hr className="border-t-2 border-blue-500 my-4" />

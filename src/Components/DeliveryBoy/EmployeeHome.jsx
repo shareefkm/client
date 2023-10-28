@@ -1,11 +1,12 @@
-import React, { useEffect, useState,Fragment } from "react";
-import { useNavigate } from "react-router-dom"
+import React, { useEffect, useState, Fragment } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { io } from "socket.io-client";
 
 import EmployeeAxios from "../../Axios/EmployeeAxios";
 import { USER_API } from "../../Constants/API";
-const baseUrl = USER_API
+const baseUrl = USER_API;
 
 function EmployeeHome() {
   const [emplDetail, setEmplDetail] = useState({});
@@ -15,7 +16,7 @@ function EmployeeHome() {
   const [is_statusUpdated, setStatusUpdated] = useState(false);
   const [socket, setSocket] = useState(null);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const employee = useSelector((state) => state.employee);
 
@@ -34,7 +35,7 @@ function EmployeeHome() {
     setSelectedOrderId(orderId === selectedOrderId ? null : orderId);
     setDropdownVisibility(!isDropdownVisible);
   };
-  
+
   // Initialize the socket connection
   useEffect(() => {
     const newSocket = io(baseUrl);
@@ -48,30 +49,32 @@ function EmployeeHome() {
     return () => {
       newSocket.disconnect();
     };
-  }, [baseUrl,]);
+  }, [baseUrl]);
 
-  const updateDeliveryStatus = (prodId, orderStatus) => {
+  const acceptOrder = (orderId) => {
     const updateStatus = {
-      prodId,
+      orderId,
       emplId: employee._id,
-      orderStatus,
-    }
-    EmployeeAxios.patch("/updatedelivery", {
-      prodId,
+    };
+    EmployeeAxios.patch("/acceptorder", {
+      orderId,
       emplId: employee._id,
-      orderStatus,
     }).then((response) => {
+      toast.success(response.data.message, {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 1500,
+      });
       setStatusUpdated(!is_statusUpdated);
     });
     socket.emit("update-order-status", { updateStatus });
   };
-  const createChat = (orderId)=>{
-    EmployeeAxios.post('/chat',{id:orderId, senderRole:'employee'}).then((res)=>{
-      navigate('/employee/chat')
-      console.log(res);
-    })
-  }
-
+  const createChat = (orderId) => {
+    EmployeeAxios.post("/chat", { id: orderId._id, senderRole: "employee" }).then(
+      (res) => {
+        navigate(`/employee/chat`);
+      }
+    );
+  };
   const renderOrderDetails = (orderId) => {
     const selectedOrder = orders?.ordersDetails.find(
       (order) => order._id === orderId
@@ -79,66 +82,79 @@ function EmployeeHome() {
     if (!selectedOrder) return null;
     return (
       <div>
-        <div className="sm:flex">
-          <div className="order-details">
-            <h3 className="underline">Order Details</h3>
-            <ul>
-              {selectedOrder.item.map((item, index) =>
-                item.employeeId === employee._id || !item.employeeId ? (
-                  <li className="text-cherry-Red" key={index}>
-                    Product: {item.product._id.toString().substr(-4)}
-                  </li>
-                ) : null
-              )}
-            </ul>
-            <h3 className="underline">Delivery Address</h3>
-            <p>
-              Street: {selectedOrder.address[0].street}
-              <br />
-              City: {selectedOrder.address[0].city}
-              <br /> Postal Code: {selectedOrder.address[0].postalCode}
-              <br /> State: {selectedOrder.address[0].state}
-            </p>
-            <p className="text-green-600 cursor-pointer" onClick={()=>createChat(selectedOrder._id)}>Chat</p>
-          </div>
-          <div className="Restaurant sm:ml-12">
-            <ul>
-              {selectedOrder.item.map((item, index) => (
-                <Fragment key={index}>
-                  {item.employeeId === employee._id || !item.employeeId ? (
-                    <>
-                  <h3 className="underline">Restaurant Details</h3>
-                    <li className="text-cherry-Red" key={item._id}>
-                      Restaurant: {item.product.restaurant_id.Name} <br />
+        {selectedOrder.employeeId === employee._id ||
+        !selectedOrder.employeeId ? (
+          <div className="sm:flex">
+            <div className="order-details">
+              <h3 className="underline">Order Details</h3>
+              <ul>
+                {selectedOrder.item.map((item, index) =>
+                  selectedOrder.employeeId === employee._id ||
+                  !selectedOrder.employeeId ? (
+                    <li className="text-cherry-Red" key={index}>
                       Product: {item.product._id.toString().substr(-4)}
                     </li>
-                   
-                  <h3 className="underline">Restaurant Location</h3>
-                  <p>
-                    Street: {item.product.restaurant_id?.Address?.street}
-                    <br />
-                    City: {selectedOrder.address[0]?.city}
-                    <br /> Postal Code: {selectedOrder.address[0]?.postalCode}
-                    <br /> State: {selectedOrder.address[0]?.state}
-                  </p>
-                  <hr />
-                  <button
-                    onClick={() =>
-                      updateDeliveryStatus(item._id, item.orderStatus)
-                    }
-                    className="text-green-600 underline"
-                  >
-                    {item.orderStatus === "Pending"
-                      ? "Accept"
-                      : item.orderStatus}
-                  </button>
-                  </>
-                  ) : null}
-                </Fragment>
-              ))}
-            </ul>
+                  ) : null
+                )}
+              </ul>
+              <h3 className="underline">Delivery Address</h3>
+              <p>
+                Street: {selectedOrder.address[0].street}
+                <br />
+                City: {selectedOrder.address[0].city}
+                <br /> Postal Code: {selectedOrder.address[0].postalCode}
+                <br /> State: {selectedOrder.address[0].state}
+              </p>
+              <p
+                className="text-green-600 cursor-pointer"
+                onClick={() => createChat(selectedOrder)}
+              >
+                Chat
+              </p>
+            </div>
+            <div className="Restaurant sm:ml-12">
+              <ul>
+                {selectedOrder.item.map((item, index) => (
+                  <Fragment key={index}>
+                    {/* {console.log(selectedOrder)} */}
+                    {selectedOrder.employeeId === employee._id ||
+                    !selectedOrder.employeeId ? (
+                      <>
+                        <h3 className="underline">Restaurant Details</h3>
+                        <li className="text-cherry-Red" key={item._id}>
+                          Restaurant: {item.product.restaurant_id.Name} <br />
+                          Product: {item.product._id.toString().substr(-4)}
+                        </li>
+
+                        <h3 className="underline">Restaurant Location</h3>
+                        <p>
+                          Street: {item.product.restaurant_id?.Address?.street}
+                          <br />
+                          City: {selectedOrder.address[0]?.city}
+                          <br /> Postal Code:{" "}
+                          {selectedOrder.address[0]?.postalCode}
+                          <br /> State: {selectedOrder.address[0]?.state}
+                        </p>
+                        <hr />
+                        {!selectedOrder.employeeId ? (
+                          <button
+                            onClick={() => acceptOrder(selectedOrder._id)}
+                            className="text-green-600 underline"
+                          >
+                            Accept
+                          </button>
+                        ) : (
+                          <p className="bg-green-200 p-1 rounded-sm font-semibold text-sm">Accepted</p>
+                          
+                        )}
+                      </>
+                    ) : null}
+                  </Fragment>
+                ))}
+              </ul>
+            </div>
           </div>
-        </div>
+        ) : null}
       </div>
     );
   };
@@ -148,7 +164,7 @@ function EmployeeHome() {
       <div className="w-full p-5 md:flex bg-off-White shadow-md">
         <div
           className={`h-28 p-4 md:w-1/3 shadow-md bg-cherry-Red rounded w-full md:mr-3 mb-3 cursor-pointer`}
-          onClick={()=> navigate('/employee/profile')}
+          onClick={() => navigate("/employee/profile")}
         >
           <div className="space-y-2 flex justify-center items-stretch">
             <img

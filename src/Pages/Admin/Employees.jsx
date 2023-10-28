@@ -1,9 +1,9 @@
 import React from 'react'
 import Header from '../../Layouts/Header/Header'
+import EmployeeDetail from '../../Components/Admin/EmployeeDetail'
 import SideBox from '../../Components/Admin/SideBox'
-import AdminDash from '../../Components/Admin/AdminDash'
 
-function AdminHome() {
+function Employees() {
   return (
     <div>
       <Header admin={true}/>
@@ -12,11 +12,11 @@ function AdminHome() {
           <SideBox/>
         </div>
         <div className='pl-5 md:w-full'>
-          <AdminDash/>
+          <EmployeeDetail/>
         </div>
       </div>
     </div>
   )
 }
 
-export default AdminHome
+export default Employees

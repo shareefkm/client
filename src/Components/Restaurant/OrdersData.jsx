@@ -148,7 +148,7 @@ function OrdersData() {
                     Payment Type
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
-                    Total Amount
+                    Total Item
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                     Status
@@ -175,6 +175,7 @@ function OrdersData() {
                             className="flex px-6 py-2 whitespace-nowrap"
                             onClick={() => openModal(item)}
                           >
+                            {console.log(item)}
                             {ind+1}
                           </td>
                           <td className="px-6 py-2 whitespace-nowrap">
@@ -183,18 +184,19 @@ function OrdersData() {
                           <td className="px-6 py-2 whitespace-nowrap">
                             {item.paymentType}
                           </td>
-                          {item.item.map((ele)=>{
+                          {/* {item.item.map((ele)=>{
                             <h1 hidden>{total = total+ele.price}</h1>
-                          })}
+                            {console.log(ele.price)}
+                          })} */}
                           <td className="px-6 py-2 whitespace-nowrap">
-                            {total}
+                            {item.item.length}
                           </td>
                           <td className="px-6 py-2 whitespace-nowrap">
                             {
                               <p
                                 className="text-yellow hover:text-amber-600"
                               >
-                                {item.paymentStatus}
+                                {(!item.is_delivered)?"Processing..." : "Deliverd"}
                               </p>
                             }
                           </td>

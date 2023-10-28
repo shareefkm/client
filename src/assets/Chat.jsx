@@ -5,6 +5,7 @@ import { AiOutlineArrowLeft } from 'react-icons/ai'
 import UserAxios from "../Axios/UserAxios";
 import EmployeeAxios from "../Axios/EmployeeAxios";
 import { USER_API } from "../Constants/API";
+import { useParams } from "react-router-dom";
 
 const baseUrl = USER_API
 
@@ -17,12 +18,14 @@ function Chat({ senderRole, reciverRole }) {
   const [isChatOpen, setIsChatOpen] = useState(false)
   const scroll = useRef()
 
+  const { userId } = useParams()
   useEffect(()=>{
     if(allMessages){
       scroll.current?.scrollIntoView({behavior: "smooth"})
     }
   },[allMessages])
   
+ 
 
   const currentPersonId = useSelector((state) =>
     senderRole === "employee" ? state.employee._id : state.user._id
@@ -41,6 +44,18 @@ function Chat({ senderRole, reciverRole }) {
       setInboxChats(res.data.chats);
     })}
   }, [senderRole]);
+
+  // useEffect(()=>{
+  //   if(inboxChats){
+  //     const result = inboxChats.find((userChat) => {
+  //       return (
+  //         userChat.userId._id ===  userId && userChat.employeeId._id === currentPersonId
+  //       );
+  //     });
+  //     console.log(result);
+  //     chatOpen(result)
+  //   }
+  // },[inboxChats, userId, currentPersonId])
 
   const sendMessage = (e) => {
     e.preventDefault()

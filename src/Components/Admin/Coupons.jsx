@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 import CouponModall from "../../assets/CouponModall";
 import AdminAxios from "../../Axios/AdminAxios";
 
 function Coupons() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [coupon, setCoupon] = useState();
+  const [is_deleted,setIs_deleted] = useState(false)
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -20,7 +23,26 @@ function Coupons() {
   };
   useEffect(() => {
     coupons();
-  }, []);
+  }, [is_deleted,coupon]);
+
+  const deleteCoupon = async (couponId)=>{
+    const result = await Swal.fire({
+      title: "Do you really want to delete this product?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel",
+    });
+    if (result.isConfirmed) {
+      AdminAxios.delete(`/deletecoupon?id=${couponId}`).then((response)=>{
+        toast.success(response.data.message, {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 1500,
+        });
+        setIs_deleted(!is_deleted)
+      })
+    }
+  }
   return (
     <div>
       <h1 className="mb-5 mt-5 text-center text-lg font-bold">Coupons</h1>
@@ -66,7 +88,7 @@ function Coupons() {
                   <td className="px-6 py-2 whitespace-nowrap">
                     <button
                       className="text-red-600 hover:text-red-900"
-                      onClick={() => handleBlockStatus(data._id)}
+                      onClick={() => deleteCoupon(data._id)}
                     >
                       Cancel
                     </button>
