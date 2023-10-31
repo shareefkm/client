@@ -12,31 +12,17 @@ import UserAxios from "../../Axios/UserAxios";
 import Button from "../../assets/Button";
 import StarRating from "../../assets/StarRating";
 
-function Shops() {
+function FilteredRestaurants() {
   const navigate = useNavigate()
   const [restaurants, setrestaurants] = useState([]);
   const [categories, setCategories] = useState([])
   const [selectedOption, setSelectedOption] = useState();
+//   const [cateName, setCateName] = useState()
   const [userRating, setUserRating] = useState(0);
 
   const user = useSelector((state) => state.user);
 
   const { catName } = useParams()
-
-  useEffect(() => {
-    const rest = async()=>{
-      try {
-        const { data } = await UserAxios.get("/getrestaurants")
-        if(data){
-          setrestaurants(data)
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    rest()
-  }, []);
-
 
   useEffect(()=>{
     UserAxios.get('/getcategories').then((response)=>{
@@ -44,9 +30,21 @@ function Shops() {
     })
   },[])
 
+  useEffect(()=>{
+    let cateName;
+    if(selectedOption){
+        cateName = selectedOption
+    }else{
+        cateName = catName
+    }
+    UserAxios.get(`/getcatrestaurants?catName=${cateName}`).then((response)=>{
+        setrestaurants(response.data)
+    })
+  },[selectedOption])
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
   };
+
   const calicAverRating = () =>{
     if (!restaurants?.restaurants) return null;
 
@@ -82,16 +80,16 @@ function Shops() {
             </div>
         </div>
         <div>
-          {categories.map((cat)=>
-        <label key={cat._id} className="flex h-10 items-center">
+          {categories.map((cat,indx)=>
+        <label key={indx} className="flex h-10 items-center">
       <input
-        type="radio"
-        name="category"
-        value={selectedOption}
-        // checked={}
-        onChange={handleOptionChange}
-        className="mr-4"
-      />
+            type="radio"
+            name="category"
+            value={cat._id.name} // Use the category's value for the radio button
+            checked={selectedOption === cat._id.name} // Check if the current category matches the selected option
+            onChange={handleOptionChange}
+            className="mr-4"
+          />
       <span className="tracking-wide font-semibold text-lg opacity-50 font-mono">{cat._id.name}</span>
       <span className="ml-auto mr-3 font-semibold text-lg opacity-50 font-mono">({cat.count})</span>
     </label>
@@ -112,29 +110,29 @@ function Shops() {
      <div className="container mx-auto px-8">
       <div className="text-3xl font-semibold mb-4 flex items-center justify-center"></div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-10">
-        {restaurants?.restaurants?.map((item, index) => (
-          <div key={index} className="mb-10 cursor-pointer bg-white" onClick={()=>navigate(`/menu/${item._id}`)}>
+        {restaurants?.restaurants?.map((item) => (
+          <div key={item._id} className="mb-10 cursor-pointer bg-white" onClick={()=>navigate(`/menu/${item.restaurant._id}`)}>
             <div className="flex items-center justify-between">
               <img
-                src={item.Image}
-                alt={item.Name}
+                src={item.restaurant.Image}
+                alt={item.restaurant.Name}
                 className="w-full h-44"
               />
             </div>
             <div className="flex justify-between px-5 pb-5">
-              <h4 className="text-xl font-bold mt-2">{item.Name}</h4>
+              <h4 className="text-xl font-bold mt-2">{item.restaurant.Name}</h4>
               <h4 className="text-xl font-bold mt-3 ml-auto mr-1">{avrRating}</h4>
               <h4 className="flex text-xl mt-4 mr-6 text-yellow"><BiSolidStarHalf/></h4>
             </div>
             <div className="px-5 pb-3">
-              <h4 className="text-lg text-gray-500">{item.Place}</h4>
-              <h4 className="text-lg text-gray-500">{item.Address?.state}</h4>
+              <h4 className="text-lg text-gray-500">{item.restaurant.Place}</h4>
+              <h4 className="text-lg text-gray-500">{item.restaurant.Address?.state}</h4>
             </div>
             <hr />
             <div className="px-5 py-3 flex">
               <div className="flex items-center justify-start">
-              <img src={item.Image}
-                alt={item.Name} 
+              <img src={item.restaurant.Image}
+                alt={item.restaurant.Name} 
                 className="w-10 h-10 rounded-full"/>
               </div>
               <div className="ml-4">
@@ -144,7 +142,7 @@ function Shops() {
                 </div>
                 <div className="flex items-center">
                 <ImLocation2 className="text-blue-700 text-xl"/>
-              <h4 className="text-lg text-gray-500">{item.Place}</h4>
+              <h4 className="text-lg text-gray-500">{item.restaurant.Place}</h4>
                 </div>
               </div>
             </div>
@@ -164,5 +162,6 @@ function Shops() {
   );
 }
 
-export default Shops;
+export default FilteredRestaurants;
+
 

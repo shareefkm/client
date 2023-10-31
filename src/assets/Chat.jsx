@@ -209,7 +209,7 @@ function Chat({ senderRole, reciverRole }) {
                     }`}
                   >
                     <div
-                      className={`relative max-w-xl px-3 py-1 text-white rounded-3xl shadow border  ${
+                      className={`relative max-w-xl px-3 py-2 text-white rounded-3xl shadow border  ${
                         currentPersonId === data.senderId._id
                           ? "bg-blue-500"
                           : "bg-gray-700"

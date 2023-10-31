@@ -61,7 +61,7 @@ function Header(props) {
 
   return (
     <div>
-      <div className="border h-10">
+      <div className="border h-10 bg-off-White">
         <div className="flex">
           <div className="sm:flex items-center justify-center space-x-4">
             <div className="ml-5 flex">

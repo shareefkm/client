@@ -14,6 +14,7 @@ import EmailVerificationPage from '../Pages/Client/EmailVerificationPage'
 import ResetPass from '../Pages/Client/ResetPass'
 import OrederItemsPage from '../Pages/Client/OrederItemsPage'
 import ClientChat from '../Pages/Client/ClientChat'
+import FilteredRestPage from '../Pages/Client/FilteredRestPage'
 
 function UserRoute() {
   const IsAuth = useSelector((state) => state.user);
@@ -22,6 +23,7 @@ function UserRoute() {
       <Routes>
         <Route path='/' element = {<Home/>}/>
         <Route path='/shops' element = {<ShopPage/>}/>
+        <Route path='/filtershops/:catName' element = {<FilteredRestPage/>}/>
         <Route path='/menu/:restId' element = {<MenuPage/>}/>
         <Route path='/register' element = { IsAuth.token ? <Home/> : <UserRegister/>}/>
         <Route path="/verify/:id" element= { <EmailVerificationPage/>} />

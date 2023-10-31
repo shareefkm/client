@@ -1,14 +1,11 @@
 import React, {lazy, Suspense} from 'react'
 import Header from '../../Layouts/Header/Header'
-import Banner from '../../Components/Client/Banner'
-import Layout from '../../Layouts/Layout'
 import Navbar from '../../Layouts/Header/Navbar'
 import Footer from '../../Layouts/Footer/Footer'
-import OurCategories from '../../Components/Client/OurCategories'
-// import PopularItems from '../../Components/Client/PopularItems'
-const PopularItems = lazy(()=>import('../../Components/Client/PopularItems'))
+// import FilteredRestaurants from '../../Components/Client/FilteredRestaurants'
+const FilteredRestaurants = lazy(()=>import('../../Components/Client/FilteredRestaurants'))
 
-function Home() {
+function FilteredRestPage() {
   return (
     <div>
       <div className='fixed top-0 z-50 w-full'>
@@ -17,16 +14,14 @@ function Home() {
       </div>
         {/* <Layout> */}
         <div className='pt-28'>
-        <Banner/>
         <Suspense fallback= {<div>Loading...</div>}>
         {/* <PopularItems/> */}
-        <OurCategories/>
+        <FilteredRestaurants/>
         </Suspense>
         <Footer/>
         </div>
-        {/* </Layout> */}
     </div>
   )
 }
 
-export default Home
+export default FilteredRestPage

@@ -113,8 +113,8 @@ function OrderItems() {
                           {ele?.price}
                           <h1 hidden> {(total = total + ele.price)}</h1>
                         </td>
-                        <td className="px-6 py-2 whitespace-nowrap flex justify-center">
-                          {(ele.orderStatus === "Delivered") ? (<div className="bg-green-500 text-white rounded-full p-2">
+                        <td className={`px-6 py-2 whitespace-nowrap ${(ele.orderStatus === "Delivered")&&"flex justify-center"} `}>
+                          {(ele.orderStatus === "Delivered") ? (<div className="bg-green-500 text-white rounded-full p-2 ">
                         <svg
                           className="w-6 h-6"
                           fill="none"
