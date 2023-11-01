@@ -36,7 +36,7 @@ const OrderTrack = ({ isOpen, closeModal, orderItem }) => {
   const ratingAndClose = async () => {
     const restId = orderItem.product.restaurant_id;
     try {
-      closeModal();
+      // closeModal();
       if (userRating > 0) {
         const response = await UserAxios.patch("/rating", {
           userId: user._id,
@@ -104,7 +104,7 @@ const OrderTrack = ({ isOpen, closeModal, orderItem }) => {
               Yummi
             </h2>
             <h2 className="text-lg font-bold">Order Status...</h2>
-            <button className="text-gray-600" onClick={handleRatingAndReview}>
+            <button className="text-gray-600" onClick={closeModal}>
               <span className="text-3xl">×</span>
             </button>
           </div>
@@ -154,6 +154,7 @@ const OrderTrack = ({ isOpen, closeModal, orderItem }) => {
                     cols={50}
                   />
                 </div>
+                <button className="text-green-500 " onClick={handleRatingAndReview}>Submit</button>
             </div> 
               ) : null}
             <div className="border p-3 justify-between shadow-md">

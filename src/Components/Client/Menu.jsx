@@ -77,7 +77,7 @@ function Menu() {
           `/getresprofile?id=${restId}`
         );
         if (data) {
-          setRestData(data.restData);
+          setRestData(data);
         }
       } catch (error) {
         console.log(error);
@@ -85,6 +85,8 @@ function Menu() {
     };
     response();
   }, []);
+
+  console.log(restData);
 
   useEffect(() => {
     RestaurantAxios.get(`/getrestarantproduct?id=${restId}`).then(
@@ -179,11 +181,11 @@ function Menu() {
         <div className="grid grid-cols-1 p-2 py-3 shadow-md rounded-md">
           <div className="mb-10">
             <div className="flex justify-between items-baseline">
-              <h4 className="text-xl font-bold mt-2">{restData?.Name}</h4>
+              <h4 className="text-xl font-bold mt-2">{restData?.restData.Name}</h4>
               <div className="border rounded-sm px-3 py-1 shadow-md bg-white">
                 <div className="flex ">
                   <h4 className="text-xl font-bold ml-auto mr-1">
-                    {isNaN(avrRating) ? "N/A" : avrRating}
+                    {restData?.ratings[0]?.averageRating}
                   </h4>
                   <h4 className="flex text-xl mt-1 text-yellow">
                     <BiSolidStarHalf />
@@ -194,7 +196,7 @@ function Menu() {
               </div>
             </div>
             <div className="">
-              <h4 className="text-lg text-gray-500">{restData?.Place}</h4>
+              <h4 className="text-lg text-gray-500">{restData?.restData.Place}</h4>
               <h4 className="text-lg text-gray-500">
                 {restData?.Address?.state}
               </h4>

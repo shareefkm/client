@@ -35,6 +35,7 @@ function Banner() {
     rest();
   }, []);
 
+  console.log(restaurants);
   useEffect(() => {
     const fetchProducts = async () => {
       try {
