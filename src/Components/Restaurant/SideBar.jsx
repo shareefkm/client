@@ -19,7 +19,7 @@ function SideBar() {
 
   return (
     <div>
-      <div className="flex">
+      <div className="flex bg-cherry-Red">
         <div className={"flex bg-cherry-Red lg:h-screen"}>
         <div className="dropdown ">
       <label tabIndex={0} className="btn btn-ghost lg:hidden" onClick={e => e.currentTarget.nextElementSibling.classList.toggle('hidden')}>
