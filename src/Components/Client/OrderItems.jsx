@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import UserAxios from "../../Axios/UserAxios";
 import OrderTrack from "../../assets/OrderTrack";
 import { useParams } from "react-router-dom";
+import Loader from "../../assets/Loader";
 
 function OrderItems() {
   let total = 0;
@@ -17,6 +18,7 @@ function OrderItems() {
   const [is_chage, setChange] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemData, setItemDta] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const { ordId } = useParams()
 
@@ -26,6 +28,7 @@ function OrderItems() {
     UserAxios.get(`/getorderitems?id=${ordId}`).then((response) => {
       const items = response?.data?.orderItems;
       setOrderItem(items);
+      setIsLoading(false)
     });
   }, [is_chage]);
 
@@ -87,6 +90,7 @@ function OrderItems() {
                   </th>
                 </tr>
               </thead>
+              {isLoading ? (<Loader/>) : (
               <tbody className="bg-white divide-y divide-gray-200 border">
                   <Fragment>
                     {orderItem?.item.map((ele) => (
@@ -157,6 +161,7 @@ function OrderItems() {
                   <td className="text-end text-lg font-semibold">{total}</td>
                 </tr>
               </tbody>
+              )}
             </table>
           </div>
         </div>

@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import UserAxios from '../../Axios/UserAxios'
 import { useNavigate } from 'react-router-dom'
+import Loader from '../../assets/Loader';
 
 function OurCategories() {
   const [categories, setCategories] = useState([])
+  const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate()
 
   useEffect(()=>{
     UserAxios.get('/getcategories').then((response)=>{
       setCategories(response.data.categories)
+      setIsLoading(false)
     })
   },[])
   return (
@@ -25,6 +28,7 @@ function OurCategories() {
                 <span className='border border-t-2 border-amber-500 w-1 ml-1'></span>
             </div>
         </div>
+        {isLoading ? (<Loader/>) : (
         <div className="container mx-auto md:px-5 px-2">
       <div className="text-3xl font-semibold mb-4 flex items-center justify-center"></div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
@@ -47,8 +51,10 @@ function OurCategories() {
          ))}
       </div>
     </div>
+    )}
       </div>
     </div>
+    
   )
 }
 

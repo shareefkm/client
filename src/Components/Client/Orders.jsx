@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import UserAxios from "../../Axios/UserAxios";
 import OrderTrack from "../../assets/OrderTrack";
+import Loader from "../../assets/Loader";
 
 function Orders() {
   let total = 0;
@@ -17,6 +18,7 @@ function Orders() {
   const [is_chage, setChange] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemData, setItemDta] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate()
   const user = useSelector((state) => state.user);
@@ -25,6 +27,7 @@ function Orders() {
     UserAxios.get(`/getorders?id=${user._id}`).then((response) => {
       const items = response.data.orders;
       setOrderItem(items);
+      setIsLoading(false)
     });
   }, [is_chage]);
 
@@ -90,6 +93,7 @@ function Orders() {
                   </th>
                 </tr>
               </thead>
+              {isLoading ? (<Loader/>) : (
               <tbody className="bg-white divide-y divide-gray-200 border">
                 {orderItem.map((item) => {
                   const formattedDate = new Date(
@@ -156,6 +160,7 @@ function Orders() {
                   )
                 })}
               </tbody>
+              )}
             </table>
           </div>
         </div>

@@ -10,8 +10,6 @@ const OrderTrack = ({ isOpen, closeModal, orderItem }) => {
   const [userRating, setUserRating] = useState(0);
   const [review, setReview] = useState("");
 
-  console.log(orderItem);
-
   const user = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -122,18 +120,6 @@ const OrderTrack = ({ isOpen, closeModal, orderItem }) => {
               <div className="pt-7">
                 <h1 className="text-sm font-bold">Billing Address.</h1>
                 <div>
-                  {/* {orderItem && orderItem.address && orderItem.address[0] ? (
-                    <div>
-                      <h1 className="italic">{orderItem.address[0].street}</h1>
-                      <h1 className="italic">{orderItem.address[0].city}</h1>
-                      <h1 className="italic">{orderItem.address[0].state}</h1>
-                      <h1 className="italic">
-                        {orderItem.address[0].postalCode}
-                      </h1>
-                    </div>
-                  ) : (
-                    <div>Address information not available.</div>
-                  )} */}
                 </div>
               </div>
             </div>

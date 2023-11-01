@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 
 import Button from "../../assets/Button";
 import UserAxios from "../../Axios/UserAxios";
+import Loader from "../../assets/Loader";
 
 function Cart() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ function Cart() {
   const [cartItem, setCartItem] = useState([]);
   const [cartId, setCartId] = useState({});
   const [is_chage, setChange] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const user = useSelector((state) => state.user);
 
@@ -24,6 +26,7 @@ function Cart() {
       const items = response.data?.cartData?.items;
       setCartItem(items);
       setCartId(response.data.cartData);
+      setIsLoading(false)
     });
   }, [is_chage]);
   const handleChangeQuantity = (id, variant, action) => {
@@ -116,6 +119,7 @@ function Cart() {
                   </th>
                 </tr>
               </thead>
+              {isLoading ? (<Loader/>) : (
               <tbody className="bg-white divide-y divide-gray-200 border">
                 {cartItem?.map((item) => (
                   <tr key={item._id}>
@@ -200,6 +204,7 @@ function Cart() {
                   </td>
                 </tr>
               </tbody>
+              )}
             </table>
           </div>
           <div className="">

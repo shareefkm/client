@@ -27,6 +27,7 @@ function Profile() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [profImage, setProfImage] = useState(null);
+  
   const [address, setAddress] = useState([
     {
       street: "",

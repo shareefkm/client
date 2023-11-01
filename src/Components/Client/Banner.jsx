@@ -4,14 +4,13 @@ import { ImLocation2 } from "react-icons/im";
 import axios from "axios";
 import UserAxios from "../../Axios/UserAxios";
 import PopularItems from "./PopularItems";
+import Loader from "../../assets/Loader";
 
 import "./Banner.css";
 
 function Banner() {
   const [products, setProducts] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [category, setCategory] = useState("");
-  const [sort, setSort] = useState("");
   const [restaurants, setrestaurants] = useState([]);
   const [suggestion, setSuggestion] = useState(false);
   const [locationSuggestions, setLocationSuggestions] = useState([]);
@@ -20,6 +19,7 @@ function Banner() {
   const [longitude, setLongitude] = useState(null);
   const [searchLocation, setSearchLocation] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const rest = async () => {
@@ -27,6 +27,7 @@ function Banner() {
         const { data } = await UserAxios.get("/getrestaurants");
         if (data) {
           setrestaurants(data);
+          setIsLoading(false)
         }
       } catch (error) {
         console.log(error);
@@ -60,8 +61,8 @@ function Banner() {
     const endpoint = `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json`;
     const params = {
       access_token: MAPBOX_API_KEY,
-      types: "place,locality,neighborhood", // Limit results to places only
-      limit: 5, // Number of suggestions to retrieve
+      types: "place,locality,neighborhood", 
+      limit: 5, 
       country: "IN",
     };
 
@@ -76,14 +77,13 @@ function Banner() {
 
   // Function to handle location suggestion selection
   const handleLocationSuggestion = async (query) => {
-    // Get location suggestions when the user types
     const suggestions = await getLocationSuggestions(query);
     setLocationSuggestions(suggestions);
   };
 
   // Function to calculate distance between two sets of coordinates
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; // Radius of the Earth in kilometers
+    const R = 6371; 
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
     const dLon = ((lon2 - lon1) * Math.PI) / 180;
     const a =
@@ -93,7 +93,7 @@ function Banner() {
         Math.sin(dLon / 2) *
         Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Distance in kilometers
+    const distance = R * c; 
     return distance;
   };
 
@@ -106,7 +106,7 @@ function Banner() {
           restaurant.latitude,
           restaurant.longitude
         );
-        return distance <= 100; // You can change the distance threshold as needed
+        return distance <= 100; 
       });
       setFilteredProducts(filtered);
     }
@@ -205,13 +205,15 @@ function Banner() {
           <img className="" src="/images/banner-img-2.webp" alt="" />
         </div>
       </div>
-
+      {isLoading ? (<Loader/>) : (
       <PopularItems
         products={products}
         restaurants={restaurants}
         filteredProducts={filteredProducts}
         location={location}
       />
+      )
+      }
     </>
   );
 }

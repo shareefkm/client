@@ -5,13 +5,10 @@ import { BiSolidStarHalf } from "react-icons/bi";
 import { AiFillClockCircle } from "react-icons/ai";
 import { ImLocation2 } from "react-icons/im";
 
-import { toast } from "react-toastify";
 
-import RestaurantAxios from "../../Axios/RestaurantAxios";
 import UserAxios from "../../Axios/UserAxios";
-import Button from "../../assets/Button";
-import StarRating from "../../assets/StarRating";
 import ProductDetailModal from "./ProductDetailModal";
+import Loader from "../../assets/Loader";
 
 function PopularItems({ products, restaurants, filteredProducts, location }) {
   let search = products;
@@ -19,33 +16,7 @@ function PopularItems({ products, restaurants, filteredProducts, location }) {
   const [userRating, setUserRating] = useState(0);
   const [item, setsetItem] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const user = useSelector((state) => state.user);
-  const calicAverRating = () => {
-    if (!restaurants?.restaurants) return null;
-
-    let totalRatings = 0;
-    let numberOfRatings = 0;
-
-    restaurants.restaurants.forEach((restaurant) => {
-      if (restaurant.rating && restaurant.rating.length > 0) {
-        restaurant.rating.forEach((rating) => {
-          totalRatings += rating.rating;
-          numberOfRatings += 1;
-        });
-      }
-    });
-
-    return numberOfRatings > 0 ? totalRatings / numberOfRatings : 0;
-  };
-  {
-    console.log(restaurants);
-  }
-  const avrRating = calicAverRating();
-
-  const handleRatingChange = (rating) => {
-    setUserRating(rating);
-  };
+  // const [isLoading, setIsLoading] = useState(true);
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -56,6 +27,7 @@ function PopularItems({ products, restaurants, filteredProducts, location }) {
       const { data } = await UserAxios.get(`/getproductdetail?id=${proId}`);
       if (data) {
         setsetItem(data);
+        // setIsLoading(false)
       }
     } catch (error) {
       console.log(error);
@@ -70,6 +42,7 @@ function PopularItems({ products, restaurants, filteredProducts, location }) {
     });
   }
   return (
+     
     <div className="bg-gray-100">
       <div className="container mx-auto md:px-20 px-3">
         <div className="text-3xl font-semibold mb-4 flex items-center justify-center py-10">

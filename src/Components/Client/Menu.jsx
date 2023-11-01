@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BiSolidStarHalf } from "react-icons/bi";
-import { FiSearch } from "react-icons/fi";
 import ProductDetailModal from "./ProductDetailModal";
 import RestaurantAxios from "../../Axios/RestaurantAxios";
 import UserAxios from "../../Axios/UserAxios";
 import Button from "../../assets/Button";
 import Pagination from "../../assets/Pagination";
-// import './Menu.css'
+import Loader from "../../assets/Loader";
 
 function Menu() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,6 +21,7 @@ function Menu() {
   const [isPriceDropdownOpen, setIsPriceDropdownOpen] = useState(false);
   const [item, setsetItem] = useState();
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
 
   const price = [
     {fieled: '₹ : 0 - 50',
@@ -50,8 +50,6 @@ function Menu() {
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const togglePriceDropdown = () => setIsPriceDropdownOpen(!isPriceDropdownOpen);
 
-  const navigate = useNavigate();
-
   const { restId } = useParams();
 
   const handleProducData = async (proId) => {
@@ -59,6 +57,7 @@ function Menu() {
       const { data } = await UserAxios.get(`/getproductdetail?id=${proId}`);
       if (data) {
         setsetItem(data);
+        setIsLoading(false)
       }
     } catch (error) {
       console.log(error);
@@ -78,6 +77,7 @@ function Menu() {
         );
         if (data) {
           setRestData(data);
+          // setIsLoading(false)
         }
       } catch (error) {
         console.log(error);
@@ -86,12 +86,11 @@ function Menu() {
     response();
   }, []);
 
-  console.log(restData);
-
   useEffect(() => {
     RestaurantAxios.get(`/getrestarantproduct?id=${restId}`).then(
       (response) => {
         setProduct(response.data.product);
+        setIsLoading(false)
       }
     );
   }, []);
@@ -100,7 +99,7 @@ function Menu() {
     const { data } = await RestaurantAxios.get(`/getcategory?id=${restId}`);
     if (data) {
       setCategories(data.categoryDatas);
-      // setCategory(data.categoryDatas[0].name);
+      // setIsLoading(false)
     }
   };
 
@@ -118,21 +117,6 @@ function Menu() {
     };
     fetchProducts();
   }, [searchTerm]);
-  
-  let totalRatings = 0;
-  const calicAverRating = () => {
-    if (!restData) return null;
-    let numberOfRatings = 0;
-    if (restData.rating && restData.rating.length > 0) {
-      restData.rating.forEach((rating) => {
-        totalRatings += rating;
-        numberOfRatings += 1;
-      });
-    }
-
-    return numberOfRatings > 0 ? totalRatings / numberOfRatings : 0;
-  };
-  const avrRating = calicAverRating();
 
   const handleCategorySelection = (ind) => {
     const selectedCat = categories[ind];
@@ -175,6 +159,7 @@ function Menu() {
   
   
   return (
+    isLoading ? (<Loader/>) : (
     <div className="container mx-auto px-5 my-element pt-5">
       <ProductDetailModal isOpen={isModalOpen} close={closeModal} item={item} />
       <div className="sm:px-24 px-3 md:px-32 lg:px-44 pt-3">
@@ -446,6 +431,7 @@ function Menu() {
       
       </div>
     </div>
+    )
   );
 }
 

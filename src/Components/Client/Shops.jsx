@@ -5,21 +5,15 @@ import { BiSolidStarHalf } from "react-icons/bi";
 import { AiFillClockCircle } from "react-icons/ai";
 import { ImLocation2 } from "react-icons/im";
 
-import { toast } from "react-toastify";
-
-import RestaurantAxios from "../../Axios/RestaurantAxios";
 import UserAxios from "../../Axios/UserAxios";
-import Button from "../../assets/Button";
-import StarRating from "../../assets/StarRating";
+import Loader from "../../assets/Loader";
 
 function Shops() {
   const navigate = useNavigate();
   const [restaurants, setrestaurants] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedOption, setSelectedOption] = useState();
-  const [userRating, setUserRating] = useState(0);
-
-  const user = useSelector((state) => state.user);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { catName } = useParams();
 
@@ -29,6 +23,7 @@ function Shops() {
         const { data } = await UserAxios.get("/getrestaurants");
         if (data) {
           setrestaurants(data);
+          setIsLoading(false)
         }
       } catch (error) {
         console.log(error);
@@ -46,37 +41,15 @@ function Shops() {
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
   };
-  const calicAverRating = () => {
-    if (!restaurants?.restaurants) return null;
-
-    let totalRatings = 0;
-    let numberOfRatings = 0;
-
-    restaurants.restaurants.forEach((restaurant) => {
-      if (restaurant.rating && restaurant.rating.length > 0) {
-        restaurant.rating.forEach((rating) => {
-          totalRatings += rating;
-          numberOfRatings += 1;
-        });
-      }
-    });
-
-    return numberOfRatings > 0 ? totalRatings / numberOfRatings : 0;
-  };
-  const avrRating = calicAverRating();
-
-  const handleRatingChange = (rating) => {
-    setUserRating(rating);
-  };
 
   const ratingsMap = {};
-  // Check if restaurants and restaurants.ratings are defined
   if (restaurants && restaurants.ratings) {
     restaurants.ratings.forEach((rating) => {
       ratingsMap[rating._id] = rating.averageRating;
     });
   }
   return (
+    isLoading ? (<Loader/>) : (
     <div className="md:flex">
       <div className="md:w-1/4 pl-4 w-full">
         <div className="py-8">
@@ -179,19 +152,13 @@ function Shops() {
                     </div>
                   </div>
                 </div>
-                {/* <div>
-              <h2>Rate this item:</h2>
-              <StarRating totalStars={5} onRatingChange={handleRatingChange} />
-              <div>
-                <p>User's Rating: {userRating}</p>
-              </div>
-            </div> */}
               </div>
             ))}
           </div>
         </div>
       </div>
     </div>
+      )
   );
 }
 

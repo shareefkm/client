@@ -1,32 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { BiSolidStarHalf } from "react-icons/bi";
 import { AiFillClockCircle } from "react-icons/ai";
 import { ImLocation2 } from "react-icons/im";
 
-import { toast } from "react-toastify";
-
-import RestaurantAxios from "../../Axios/RestaurantAxios";
 import UserAxios from "../../Axios/UserAxios";
-import Button from "../../assets/Button";
-import StarRating from "../../assets/StarRating";
+import Loader from "../../assets/Loader";
 
 function FilteredRestaurants() {
   const navigate = useNavigate();
   const [restaurants, setrestaurants] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedOption, setSelectedOption] = useState();
-  //   const [cateName, setCateName] = useState()
-  const [userRating, setUserRating] = useState(0);
-
-  const user = useSelector((state) => state.user);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { catName } = useParams();
 
   useEffect(() => {
     UserAxios.get("/getcategories").then((response) => {
       setCategories(response.data.categories);
+      setIsLoading(false)
     });
   }, []);
 
@@ -39,34 +32,13 @@ function FilteredRestaurants() {
     }
     UserAxios.get(`/getcatrestaurants?catName=${cateName}`).then((response) => {
       setrestaurants(response.data);
+      setIsLoading(false)
     });
   }, [selectedOption]);
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
   };
 
-  const calicAverRating = () => {
-    if (!restaurants?.restaurants) return null;
-
-    let totalRatings = 0;
-    let numberOfRatings = 0;
-
-    restaurants.restaurants.forEach((restaurant) => {
-      if (restaurant.rating && restaurant.rating.length > 0) {
-        restaurant.rating.forEach((rating) => {
-          totalRatings += rating;
-          numberOfRatings += 1;
-        });
-      }
-    });
-
-    return numberOfRatings > 0 ? totalRatings / numberOfRatings : 0;
-  };
-  const avrRating = calicAverRating();
-
-  const handleRatingChange = (rating) => {
-    setUserRating(rating);
-  };
   const ratingsMap = {};
   if (restaurants && restaurants.ratings) {
     restaurants.ratings.forEach((rating) => {
@@ -74,7 +46,8 @@ function FilteredRestaurants() {
     });
   }
   return (
-    <div className="flex">
+    isLoading ? ( <Loader/>) :(
+    <div className="flex"> 
       <div className="w-1/4 pl-4">
         <div className="py-8">
           <h1 className="font-sans font-bold text-2xl">Food Categories</h1>
@@ -108,7 +81,6 @@ function FilteredRestaurants() {
       </div>
       <div className="bg-gray-100 w-3/4 ml-auto">
         <div className="py-10">
-          {/* <h1 className='font-sans text-amber-500 font-bold tracking-wider flex items-center justify-center text-lg pb-3'>TOP FOODS</h1> */}
           <h1 className="font-sans font-semibold ml-8 flex items-center text-4xl">
             {restaurants?.restaurants?.length}+ Restaurant
           </h1>
@@ -182,19 +154,13 @@ function FilteredRestaurants() {
                     </div>
                   </div>
                 </div>
-                {/* <div>
-              <h2>Rate this item:</h2>
-              <StarRating totalStars={5} onRatingChange={handleRatingChange} />
-              <div>
-                <p>User's Rating: {userRating}</p>
-              </div>
-            </div> */}
               </div>
             ))}
           </div>
         </div>
       </div>
     </div>
+    )
   );
 }
 
