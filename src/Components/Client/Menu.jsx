@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BiSolidStarHalf } from "react-icons/bi";
+import { toast } from "react-toastify";
 import ProductDetailModal from "./ProductDetailModal";
 import RestaurantAxios from "../../Axios/RestaurantAxios";
 import UserAxios from "../../Axios/UserAxios";
@@ -77,7 +78,6 @@ function Menu() {
         );
         if (data) {
           setRestData(data);
-          // setIsLoading(false)
         }
       } catch (error) {
         console.log(error);
@@ -92,14 +92,21 @@ function Menu() {
         setProduct(response.data.product);
         setIsLoading(false)
       }
-    );
+    ).catch((error)=>{
+      toast.error(error.response?.data?.message, {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 1500,
+      });
+      setIsLoading(false)
+    })
   }, []);
 
   const categoryData = async () => {
     const { data } = await RestaurantAxios.get(`/getcategory?id=${restId}`);
     if (data) {
       setCategories(data.categoryDatas);
-      // setIsLoading(false)
+    }else{
+      setIsLoading(false)
     }
   };
 
@@ -135,7 +142,6 @@ function Menu() {
   const handlePriceSelection = (indx) => {
     const priceSelected = price[indx]
     setSelectedPrice(priceSelected);
-    console.log(priceSelected);
     let nearestPrice;
     if(indx < price.length-1){
        nearestPrice = price[indx+1].startedAt

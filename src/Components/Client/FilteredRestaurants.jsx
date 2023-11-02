@@ -19,7 +19,6 @@ function FilteredRestaurants() {
   useEffect(() => {
     UserAxios.get("/getcategories").then((response) => {
       setCategories(response.data.categories);
-      setIsLoading(false)
     });
   }, []);
 
@@ -37,6 +36,7 @@ function FilteredRestaurants() {
   }, [selectedOption]);
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
+    setIsLoading(true)
   };
 
   const ratingsMap = {};

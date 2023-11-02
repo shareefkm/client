@@ -261,7 +261,7 @@ function ProfileRestaurant() {
           )}
         </div>
         <div className="w-1/2 ">
-          <label htmlFor="restaurant_id" className="block font-medium">
+          {/* <label htmlFor="restaurant_id" className="block font-medium">
             Restaurant ID
           </label>
           <input
@@ -270,7 +270,7 @@ function ProfileRestaurant() {
             value={restaurant_id}
             readOnly
             className="border border-gray-300 rounded-sm lg:w-3/5 bg-gray-300 mb-5 py-1 w-full"
-          />
+          /> */}
           <div className="h-52 lg:flex items-center justify-center bg-gray-300 lg:w-3/5 w-full">
               <label htmlFor="profImage" className="cursor-pointer">
                 <img
